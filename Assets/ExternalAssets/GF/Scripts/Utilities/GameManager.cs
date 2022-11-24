@@ -45,8 +45,11 @@ public class GameManager {
 	public void SwitchPlayer(int index, bool active){
 		GameObject.FindGameObjectWithTag ("GameController").GetComponent<GF_GameController> ().SwitchPlayer (index, active);
 	}
-
-	public void PauseTimer(){
+	public void CheckDie()
+	{
+		GameObject.FindGameObjectWithTag("GameController").GetComponent<GF_GameController>().CheckDie();
+	}
+		public void PauseTimer(){
 		GameObject.FindGameObjectWithTag ("GameController").GetComponent<GF_GameController> ().TimerPaused = true;
 	}
 

@@ -47,8 +47,8 @@ public class HealthBar : MonoBehaviour
     /// </summary>
     private void Die()
     {
-        // Die action here.
-     
+         GameManager.Instance.CheckDie();
+
     }
     public void SetMaxHealth(float health)
     {
@@ -83,5 +83,9 @@ public class HealthBar : MonoBehaviour
 
     }
     // Update is called once per frame
-  
+    private void Update()
+    {
+        Debug.Log(this.name + " " + currentHealth);
+    }
+
 }
