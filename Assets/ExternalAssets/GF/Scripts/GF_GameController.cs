@@ -48,6 +48,7 @@ public class GF_GameController : MonoBehaviour {
 	private int Rewardamount = 0;
 	[HideInInspector]
 	public bool TimerPaused = false;
+	int loser;
 
 	#region debug
 
@@ -126,61 +127,104 @@ public class GF_GameController : MonoBehaviour {
 
 		GF_AdsManager.HideBanner ();
 
+		InitialFunction(false, 0f);
+		InitialFunction(true, 12.0f);
 
-		for (int i = 0; i < Players.Length; i++)
-		{
-
-			if (Players[i].PlayerObject.GetComponent<Animator>() != null)
-			{
-				Players[i].PlayerObject.GetComponent<Animator>().enabled = false;
-			}
-			//if (Players[i].PlayerObject.GetComponent<CollisionDetection>() != null)
-			//{
-			//		Players[i].PlayerObject.GetComponent<CollisionDetection>().enabled = false;
-			//}
-			if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
-			{
-				Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = false;
-			}
-			if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
-			{
-				Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = false;
-			}
-			Players[i].PlayerControls.alpha = 0;
-			Players[i].PlayerControls.interactable = false;
-			Players[i].PlayerControls.blocksRaycasts = false;
-
-
-		}
-		StartCoroutine(Interractive());
 	}
-	IEnumerator Interractive()
-	{
-		yield return new WaitForSeconds(10.0f);
+
+	public void CheckDie()
+    {
+		Debug.Log("checking Die obj...");
 		for (int i = 0; i < Players.Length; i++)
 		{
-			Players[i].PlayerObject.SetActive(true);
+			if (Players[i].PlayerObject.GetComponent<HealthBar>().currentHealth <= 0)
+			{
+				loser = i;
+				Debug.Log(Players[i].PlayerObject.GetComponent<PrometeoCarController>().name);
+				if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
+				{
+					Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = false;
+				}
+				if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
+				{
+					Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = false;
+				}
+			}
+			
+		}
+
+		CheckAllDie();
+
+	}
+
+	public void CheckAllDie()
+	{
+		int left = Players.Length;
+		bool[] AllPlayers = new bool[left];
+
+		for (int i = 0; i < Players.Length; i++)
+		{
+			if (Players[i].PlayerObject.GetComponent<HealthBar>().currentHealth <= 0)
+			{
+				left--;
+				AllPlayers[i] = true;
+			}
+		}
+		if(left < 2)
+        {
+			//finish screen with player name.
+			Debug.Log("all die");
+			for (int i = 0; i < AllPlayers.Length; i++)
+			{
+				if (!AllPlayers[i])
+                {
+					if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
+					{
+						Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = false;
+						Debug.Log("AI Won");
+					}
+					if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
+					{
+						Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = false;
+						Debug.Log("Player " + Players[i].PlayerObject.GetComponent<PrometeoCarController>().name + " Won");
+					}
+				}
+			}
+		}
+	}
+
+	public void InitialFunction(bool active, float timer)
+    {
+		StartCoroutine(Interractive(active, timer));
+	}
+
+	IEnumerator Interractive(bool active,float timer)
+	{
+		yield return new WaitForSeconds(timer);
+		for (int i = 0; i < Players.Length; i++)
+		{
+			if(active==true)
+			Players[i].PlayerObject.SetActive(active);
 
 			if (Players[i].PlayerObject.GetComponent<Animator>() != null)
 			{
-				Players[i].PlayerObject.GetComponent<Animator>().enabled = true;
+				Players[i].PlayerObject.GetComponent<Animator>().enabled = active;
 			}
 			//if (Players[i].PlayerObject.GetComponent<CollisionDetection>() != null)
 			//{
-			//	Players[i].PlayerObject.GetComponent<CollisionDetection>().enabled = true;
+			//	Players[i].PlayerObject.GetComponent<CollisionDetection>().enabled = active;
 			//}
 			if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
 			{
-				Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = true;
+				Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = active;
 			}
 			if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
 			{
-				Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = true;
+				Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = active;
 			}
-			Players[i].PlayerControls.alpha = 1;
-			Players[i].PlayerControls.interactable = true;
-			Players[i].PlayerControls.blocksRaycasts = true;
-
+			/*	Players[i].PlayerControls.alpha = 1;
+				Players[i].PlayerControls.interactable = active;
+				Players[i].PlayerControls.blocksRaycasts = active;*/
 		}	
 	}
 	void InitializeGame () {

@@ -190,19 +190,41 @@ public class PrometeoCarController : MonoBehaviour
             //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
             if (currentHealth <= maxHealth)
                 healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.1f, healthBar);
-                //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
+            //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
+            GoReverse();
         }
-
+        if (collision.collider.tag.Equals("rotator"))
+        {
+            Debug.Log("stay");
+            //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
+            if (currentHealth <= maxHealth)
+                healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.1f, healthBar);
+            //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
+            for(int i=0; i < 500 ; i++)
+                GoReverse();
+            Debug.Log("Reverse stay..");
+        }
     }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.name.Equals("Axe"))
         {
            // Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
             if (currentHealth <= maxHealth)
-                healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.8f, healthBar);
+                healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.4f, healthBar);
             //
             //currentHealth -= (collision.relativeVelocity.magnitude * 0.8f);
+        }
+        if (collision.collider.tag.Equals("rotator"))
+        {
+            Debug.Log("Enter");
+            //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
+            if (currentHealth <= maxHealth)
+                healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.2f, healthBar);
+            //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
+            GoReverse();
+            Debug.Log("Reverse enter..");
         }
     }
 
