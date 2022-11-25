@@ -490,6 +490,7 @@ public class GF_GameController : MonoBehaviour {
 
 	//Dialogues Logic
 	public void OnLevelCheck (int reasonIndex) {
+		Debug.LogWarning("Onlevel checkss .......");
 		//For Debug
 		ObjectivesLeft = GameManager.Instance.Objectives;
 
@@ -498,27 +499,37 @@ public class GF_GameController : MonoBehaviour {
 				ActivateFinishPoint ();
 			else
 				Debug.LogWarning ("No Objectives have been defined in the inspector !");
-        } else if (GameManager.Instance.Objectives == 0) {
+			Debug.LogWarning("Onlevel checkss ..1.....");
+		}
+		else if (GameManager.Instance.Objectives == 0) {
 			if (Levels [currentLevel - 1].Objectives.Length != 0)
 				ActivateFinishPoint ();
 			else
 				Debug.LogWarning ("No Objectives have been defined in the inspector !");
+			Debug.LogWarning("Onlevel checkss ..2.....");
 
 			//Calculate Reward
 			if (Levels [currentLevel - 1].GiveReward){
-				GiveRewards ();
+				Debug.LogWarning("Onlevel checkss ...21....");
+				GiveRewards();
 			}
-			DisableAudio ();
+			Debug.LogWarning("Onlevel checkss ...22....");
+			DisableAudio();
 			FX_AudioSource.GetComponent<AudioSource> ().PlayOneShot (SFX_Elements.LevelCompleteSFX);
 			StartCoroutine (OnLevelStatus ());
-        } else if (GameManager.Instance.GameStatus == "Loose") {
-			DisableAudio ();
+			Debug.LogWarning("Onlevel checkss ...23....");
+		}
+		else if (GameManager.Instance.GameStatus == "Loose") {		
+			Debug.LogWarning("Onlevel checkss ...3....");
+			//DisableAudio ();
 			if (ReasonBased)
 				SetGameOverReason (reasonIndex);
 			FX_AudioSource.GetComponent<AudioSource> ().PlayOneShot (SFX_Elements.LevelFailedSFX);
+			Debug.LogWarning("Onlevel check ..31.....");
 			StartCoroutine (OnLevelStatus ());
         }
-    }
+		
+	}
 
 	void DisableAudio (){
 		for (int i = 0; i < SFX_Elements.BGMusicLoops.Length; i++){
