@@ -77,7 +77,8 @@ public class HealthBar : MonoBehaviour
         }
             catch (System.Exception ex)
             {
-                Debug.LogWarning(ex);
+            
+                Debug.LogWarning("name " +this.name+ ex);
             }
 
 
@@ -85,7 +86,11 @@ public class HealthBar : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        Debug.Log(this.name + " " + currentHealth);
+        if(currentHealth==0&&this.name=="tombstone")
+        {
+            GameManager.Instance.GameLoose(1);
+        }
+       
     }
 
 }

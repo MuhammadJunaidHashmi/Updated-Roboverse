@@ -34,9 +34,11 @@ public class GameManager {
     }
 
 	public void GameLoose(int reasonIndex=0){
+		Debug.Log("what=" + reasonIndex);
 		if (GameStatus != "Loose"){
 			GameStatus = "Loose";
-			GameObject.FindGameObjectWithTag ("GameController").GetComponent<GF_GameController> ().OnLevelCheck (reasonIndex);
+			Debug.LogWarning("Game loose being called one times !");
+			GameObject.FindGameObjectWithTag("GameController").GetComponent<GF_GameController>().OnLevelCheck (reasonIndex);
 		} else{
 			Debug.LogWarning ("Game loose being called multiple times !");
 		}
