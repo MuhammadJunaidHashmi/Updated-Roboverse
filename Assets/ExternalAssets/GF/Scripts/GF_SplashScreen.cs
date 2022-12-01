@@ -51,7 +51,7 @@ public class GF_SplashScreen : MonoBehaviour {
 		{
 			async.allowSceneActivation = false;
 			
-			Selection_UI.FillBar.value += async.progress / 1999;
+			Selection_UI.FillBar.value += async.progress / 1999	;
 			Selection_UI.value.text = (Mathf.Floor(Selection_UI.FillBar.value * 100)) + "%";
 			if (Selection_UI.FillBar.value >= (Selection_UI.FillBar.maxValue))
 				async.allowSceneActivation = true;
