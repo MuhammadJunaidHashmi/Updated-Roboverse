@@ -90,7 +90,11 @@ public class HealthBar : MonoBehaviour
         {
             GameManager.Instance.GameLoose(1);
         }
-       
+        if (currentHealth == 0 && this.name == "computer")
+        {
+            GameManager.Instance.GameLoose(2);
+        }
+
     }
 
 }
