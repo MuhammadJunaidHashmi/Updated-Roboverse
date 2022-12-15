@@ -49,7 +49,8 @@ public class Level_Data {
     public GameObject LevelObject;
 	[Header("Player Spawn")]
 	public PlayerSpawn PrimaryPlayer;
-	public bool EnableSecondarySpawns;
+    public PlayerSpawn main_AI;
+    public bool EnableSecondarySpawns;
 	public PlayerSpawn[] SecondaryPlayers;
 	[Header("Items Spawn")]
 	public ItemSpawner[] Items;

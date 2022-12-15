@@ -11,7 +11,7 @@ public class HealthBar : MonoBehaviour
     public Text velocity;
     public Text damage;
     public Slider slider;
-    public float maxHealth = 100;
+    public float maxHealth = 10;
     public float currentHealth = 0;
 
     Rigidbody rd;
@@ -86,11 +86,11 @@ public class HealthBar : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if(currentHealth==0&&this.name=="tombstone")
+        if(currentHealth==0 && this.tag.Equals("Player"))
         {
             GameManager.Instance.GameLoose(1);
         }
-        if (currentHealth == 0 && this.name == "computer")
+        if (currentHealth == 0 && this.tag.Equals("AI"))
         {
             GameManager.Instance.GameLoose(2);
         }

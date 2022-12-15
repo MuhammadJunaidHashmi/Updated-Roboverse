@@ -48,12 +48,13 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
 
         System.Random randam = new System.Random();
         int Follow = randam.Next(lis.Count);
-
-        targetChase = lis[Follow].transform;
-        if (GameObject.FindObjectOfType<CameraFollow>())
+        if( lis.Count != 0)
         {
-
-            GameObject.FindObjectOfType<CameraFollow>().SetPlayerBotTransform(targetChase);
+            targetChase = lis[Follow].transform;
+            if (GameObject.FindObjectOfType<CameraFollow>())
+            {
+                GameObject.FindObjectOfType<CameraFollow>().SetPlayerBotTransform(targetChase);
+            }
         }
 
     }
@@ -75,7 +76,7 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
                 break;
 
             case AIstate.persuing:
-                dis = Vector3.Distance(targetChase.position, transform.position);
+                dis = Vector3.Distance(targetChase.position,transform.position);
                
                 if (dis < 4)
                 {
@@ -108,7 +109,6 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
     }
     void Awake()
     {
-        FindTarget();
         /*for (int i = 0; i < lis.Count; i++)
         {
             GameObject duplicate = Instantiate(GameObject.FindWithTag("Health"));
@@ -118,6 +118,7 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
         carController = GetComponent<PrometeoCarController>();
         rotate = GetComponentInChildren<rotat>();
         carController.AIController = true;
+
         rigid = GetComponent<Rigidbody>();
 
         navigatorObject = new GameObject("Navigator");
@@ -133,10 +134,9 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
     }
     void Update()
     {
+        FindTarget();
         think();
     }
-
-
 
     IEnumerator Attack()
     { 
@@ -148,11 +148,7 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
     void FixedUpdate()
     {
         Navigation();
-        Movement();
-       
-
-        
-
+        Movement();   
     }
 
     void Movement()
@@ -187,10 +183,10 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
     void Navigation()
     {
             Vector3 relativePos = (targetChase.position - transform.position).normalized;
-        //when navmesh is apply      
-        if (navigator.isOnNavMesh)
+            //when navmesh is apply      
+            if (navigator.isOnNavMesh)
                    navigator.SetDestination(targetChase.position);
-             carController.steeringAxis = Mathf.Clamp(AngleAroundAxis(transform.forward, relativePos, Vector3.up), -1f, 1f);
+            carController.steeringAxis = Mathf.Clamp(AngleAroundAxis(transform.forward, relativePos, Vector3.up), -1f, 1f);
            
             if (carController.steeringAxis > 0)
             {
@@ -202,8 +198,7 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
             }            
             else
             {
-                carController.steeringAxis = 0;
-            
+                carController.steeringAxis = 0;            
             }
     }
 
@@ -213,7 +208,6 @@ public class AI_Prometeo_Car_Controller : MonoBehaviour
         if (carController.direction == 1)
         {
             carController.throttleAxis = carController.throttleAxis * Mathf.Clamp01(Mathf.Lerp(10f, 0f, (carController.carSpeed) / 90));
-
         }
         else
         {

@@ -1,16 +1,22 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+
 using UnityEngine.SceneManagement;
 
 public class GF_GameController : MonoBehaviour {
 
 	[Header ("Scene Selection")]
 	public Scenes PreviousScene;
+	
 	public Scenes NextScene;
 
 	[Header ("Main Player", order = 1)]
 	public Player_Attributes[] Players;
+
+	[Header("AI Attributes", order = 1)]
+	public Player_Attributes[] AI;
 
 	[Header ("Game Dialogues")]
 	public Game_Dialogues Game_Elements;
@@ -48,7 +54,7 @@ public class GF_GameController : MonoBehaviour {
 	private int Rewardamount = 0;
 	[HideInInspector]
 	public bool TimerPaused = false;
-	int loser;
+
 
 	#region debug
 
@@ -80,18 +86,18 @@ public class GF_GameController : MonoBehaviour {
 		AudioListener.pause = false;
 
 		#if UNITY_EDITOR
-		if (GameManager.Instance.SessionStatus == 1) {
+			if (GameManager.Instance.SessionStatus == 1) {
+				currentLevel = GameManager.Instance.CurrentLevel;
+				currentPlayer = GameManager.Instance.CurrentPlayer;
+			} else {
+				currentLevel = StartLevel;
+				currentPlayer = StartPlayer;
+				GameManager.Instance.CurrentLevel = currentLevel;
+				GameManager.Instance.CurrentPlayer = currentPlayer;
+			}
+		#else
 			currentLevel = GameManager.Instance.CurrentLevel;
 			currentPlayer = GameManager.Instance.CurrentPlayer;
-        } else {
-			currentLevel = StartLevel;
-			currentPlayer = StartPlayer;
-			GameManager.Instance.CurrentLevel = currentLevel;
-			GameManager.Instance.CurrentPlayer = currentPlayer;
-        }
-		#else
-		currentLevel = GameManager.Instance.CurrentLevel;
-		currentPlayer = GameManager.Instance.CurrentPlayer;
 		#endif
 		StartLevel = GameManager.Instance.CurrentLevel;
 		StartPlayer = GameManager.Instance.CurrentPlayer;
@@ -115,6 +121,8 @@ public class GF_GameController : MonoBehaviour {
 		FX_AudioSource = GameObject.Find ("FX_AudioSource");
 
 		//SpawnPlayer();
+		randomAI_index();
+		SpawnAI();
 		SpawnPlayers ();
 		ActivateLevel ();
 		if (Levels [currentLevel - 1].Objectives.Length > 0) {
@@ -128,10 +136,22 @@ public class GF_GameController : MonoBehaviour {
 		GF_AdsManager.HideBanner ();
 
 		InitialFunction(false, 0f);
-		InitialFunction(true, 12.0f);
+		InitialFunction(true, 12.0f);	
 
 	}
 
+	void randomAI_index()
+	{
+		System.Random ran = new System.Random();
+		Levels[currentLevel - 1].main_AI.PlayerIndex = ran.Next(AI.Length);
+	
+		AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.SetActive(true);
+		if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
+		{
+			AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = true;
+		}
+		Debug.Log(Levels[currentLevel - 1].main_AI.PlayerIndex);
+	}
 	public void CheckDie()
     {
 		Debug.Log("checking Die obj...");
@@ -139,7 +159,6 @@ public class GF_GameController : MonoBehaviour {
 		{
 			if (Players[i].PlayerObject.GetComponent<HealthBar>().currentHealth <= 0)
 			{
-				loser = i;
 				Debug.Log(Players[i].PlayerObject.GetComponent<PrometeoCarController>().name);
 				if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
 				{
@@ -149,8 +168,7 @@ public class GF_GameController : MonoBehaviour {
 				{
 					Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = false;
 				}
-			}
-			
+			}			
 		}
 
 		CheckAllDie();
@@ -167,7 +185,9 @@ public class GF_GameController : MonoBehaviour {
 	public void CheckAllDie()
 	{
 		int left = Players.Length;
+		int right = AI.Length;
 		bool[] AllPlayers = new bool[left];
+		bool[] AllAi = new bool[right];
 
 		for (int i = 0; i < Players.Length; i++)
 		{
@@ -177,7 +197,15 @@ public class GF_GameController : MonoBehaviour {
 				AllPlayers[i] = true;
 			}
 		}
-		if(left < 2)
+		for (int i = 0; i < AI.Length; i++)
+		{
+			if (AI[i].PlayerObject.GetComponent<HealthBar>().currentHealth <= 0)
+			{
+				right--;
+				AllAi[i] = true;
+			}
+		}
+		if ( (left + right) < 2)
         {
 			//finish screen with player name.
 			Debug.Log("all die");
@@ -185,11 +213,6 @@ public class GF_GameController : MonoBehaviour {
 			{
 				if (!AllPlayers[i])
                 {
-					if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
-					{
-						Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = false;
-						Debug.Log("AI Won");
-					}
 					if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
 					{
 						Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = false;
@@ -197,6 +220,18 @@ public class GF_GameController : MonoBehaviour {
 					}
 				}
 			}
+			for (int i = 0; i < AllAi.Length; i++)
+			{
+				if (!AllAi[i])
+				{
+                    if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
+                    {
+                        Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = false;
+                        Debug.Log("AI Won");
+                    }
+                }
+			}
+
 		}
 	}
 
@@ -210,29 +245,31 @@ public class GF_GameController : MonoBehaviour {
 		yield return new WaitForSeconds(timer);
 		for (int i = 0; i < Players.Length; i++)
 		{
-			if(active==true)
+			if(active)
 			Players[i].PlayerObject.SetActive(active);
 
 			if (Players[i].PlayerObject.GetComponent<Animator>() != null)
 			{
 				Players[i].PlayerObject.GetComponent<Animator>().enabled = active;
 			}
-			//if (Players[i].PlayerObject.GetComponent<CollisionDetection>() != null)
-			//{
-			//	Players[i].PlayerObject.GetComponent<CollisionDetection>().enabled = active;
-			//}
-			if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
-			{
-				Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = active;
-			}
 			if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
 			{
 				Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = active;
 			}
-			/*	Players[i].PlayerControls.alpha = 1;
-				Players[i].PlayerControls.interactable = active;
-				Players[i].PlayerControls.blocksRaycasts = active;*/
-		}	
+			
+		}
+		if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<Animator>() != null)
+		{
+			AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<Animator>().enabled = active;
+		}
+		if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<PrometeoCarController>() != null)
+			{
+				AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<PrometeoCarController>().enabled = active;	
+			}
+			if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
+			{
+				AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = active;
+			}
 	}
 	void InitializeGame () {
 		SaveData.Instance = new SaveData ();
@@ -291,7 +328,13 @@ public class GF_GameController : MonoBehaviour {
     }
 
 	#region PlayerMain (Spawn / Controls)
-
+	void SpawnAI()
+	{
+		if (Levels[currentLevel - 1].main_AI.PlayerIndex >= 0 && Levels[currentLevel - 1].main_AI.PlayerIndex < AI.Length)
+		{
+			SetPlayerPosition(AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject, Levels[currentLevel - 1].main_AI.SpawnPoint);
+		}
+	}
 	void SpawnPlayers (){
 		if (Players.Length > 0 && Players.Length > currentPlayer - 1) {
 			
@@ -386,22 +429,6 @@ public class GF_GameController : MonoBehaviour {
 			{
 				Players[i].PlayerObject.SetActive(true);
 
-				if (Players[i].PlayerObject.GetComponent<Animator>() != null)
-				{
-					Players[i].PlayerObject.GetComponent<Animator>().enabled = true;
-				}
-				//if (Players[i].PlayerObject.GetComponent<CollisionDetection>() != null)
-				//{
-				//	Players[i].PlayerObject.GetComponent<CollisionDetection>().enabled = true;
-				//}
-				if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
-				{
-					Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = true;
-				}
-				if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
-				{
-					Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = true;
-				}
 
 				Players[i].PlayerControls.alpha = 1;
 				Players[i].PlayerControls.interactable = true;
@@ -409,22 +436,7 @@ public class GF_GameController : MonoBehaviour {
 			}
 			else
 			{
-				if (Players[i].PlayerObject.GetComponent<Animator>() != null)
-				{
-					Players[i].PlayerObject.GetComponent<Animator>().enabled = false;
-				}
-				//if (Players[i].PlayerObject.GetComponent<CollisionDetection>() != null)
-				//{
-				//		Players[i].PlayerObject.GetComponent<CollisionDetection>().enabled = false;
-				//}
-				if (Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
-				{
-					Players[i].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = false;
-				}
-				if (Players[i].PlayerObject.GetComponent<PrometeoCarController>() != null)
-				{
-					Players[i].PlayerObject.GetComponent<PrometeoCarController>().enabled = false;
-				}
+			
 				Players[i].PlayerControls.alpha = 0;
 				Players[i].PlayerControls.interactable = false;
 				Players[i].PlayerControls.blocksRaycasts = false;
@@ -497,7 +509,6 @@ public class GF_GameController : MonoBehaviour {
 
 	//Dialogues Logic
 	public void OnLevelCheck (int reasonIndex) {
-		Debug.LogWarning("Onlevel checkss .......");
 		//For Debug
 		ObjectivesLeft = GameManager.Instance.Objectives;
 
@@ -506,33 +517,26 @@ public class GF_GameController : MonoBehaviour {
 				ActivateFinishPoint ();
 			else
 				Debug.LogWarning ("No Objectives have been defined in the inspector !");
-			Debug.LogWarning("Onlevel checkss ..1.....");
 		}
 		else if (GameManager.Instance.Objectives == 0) {
 			if (Levels [currentLevel - 1].Objectives.Length != 0)
 				ActivateFinishPoint ();
 			else
 				Debug.LogWarning ("No Objectives have been defined in the inspector !");
-			Debug.LogWarning("Onlevel checkss ..2.....");
 
 			//Calculate Reward
 			if (Levels [currentLevel - 1].GiveReward){
-				Debug.LogWarning("Onlevel checkss ...21....");
 				GiveRewards();
 			}
-			Debug.LogWarning("Onlevel checkss ...22....");
 			DisableAudio();
 			FX_AudioSource.GetComponent<AudioSource> ().PlayOneShot (SFX_Elements.LevelCompleteSFX);
 			StartCoroutine (OnLevelStatus ());
-			Debug.LogWarning("Onlevel checkss ...23....");
 		}
 		else if (GameManager.Instance.GameStatus == "Loose") {		
-			Debug.LogWarning("Onlevel checkss ...3....");
 			//DisableAudio ();
 			if (ReasonBased)
 				SetGameOverReason (reasonIndex);
 			FX_AudioSource.GetComponent<AudioSource> ().PlayOneShot (SFX_Elements.LevelFailedSFX);
-			Debug.LogWarning("Onlevel check ..31.....");
 			StartCoroutine (OnLevelStatus ());
         }
 		

@@ -51,6 +51,8 @@ public class GF_PlayerSelection : MonoBehaviour {
     [Header("Player Attributes")]
     public PlayerAttributes[] Players;
 
+
+
     [Header("Ad Sequence ID")]
     public int SequenceID;
 	public bool LoadingSequence;
