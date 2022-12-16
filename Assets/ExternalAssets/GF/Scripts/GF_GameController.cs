@@ -150,6 +150,10 @@ public class GF_GameController : MonoBehaviour {
 		{
 			AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = true;
 		}
+		AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject = Instantiate(AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject, Vector3.zero, Quaternion.identity) as GameObject;
+		// Modify the clone to your heart's content
+		//clone.transform.position = Vector3.one;
+
 		Debug.Log(Levels[currentLevel - 1].main_AI.PlayerIndex);
 	}
 	public void CheckDie()
@@ -258,18 +262,16 @@ public class GF_GameController : MonoBehaviour {
 			}
 			
 		}
-		if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<Animator>() != null)
-		{
-			AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<Animator>().enabled = active;
-		}
-		if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<PrometeoCarController>() != null)
-			{
-				AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<PrometeoCarController>().enabled = active;	
-			}
+	
+			
 			if (AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>() != null)
 			{
 				AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<AI_Prometeo_Car_Controller>().enabled = active;
-			}
+				AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<PrometeoCarController>().enabled = active;
+				AI[Levels[currentLevel - 1].main_AI.PlayerIndex].PlayerObject.GetComponent<Rigidbody>().isKinematic = !active;
+
+		}
+
 	}
 	void InitializeGame () {
 		SaveData.Instance = new SaveData ();
