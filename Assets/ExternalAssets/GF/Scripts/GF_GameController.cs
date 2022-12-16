@@ -136,7 +136,7 @@ public class GF_GameController : MonoBehaviour {
 		GF_AdsManager.HideBanner ();
 
 		InitialFunction(false, 0f);
-		InitialFunction(true, 12.0f);	
+		InitialFunction(true, 18.0f);	
 
 	}
 
