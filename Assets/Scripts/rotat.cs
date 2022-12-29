@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class rotat : MonoBehaviour
 {
@@ -14,35 +15,11 @@ public class rotat : MonoBehaviour
     private float maxHealth = 100;
     private float currentHealth = 0;
     display Display;
+    PhotonView view;
 
-
-    // Start is called before the first frame update
-  /*  void OnCollisionEnter(Collision collision)
+     void Start()
     {
-        if (collision.collider.name.Equals("Axe"))
-        {
-            Debug.Log("ai attack: " + collision.relativeVelocity.magnitude);
-            *//*if (currentHealth <= maxHealth)
-                currentHealth -= 10;*//*
-        }
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            rotat pcc = collision.gameObject.GetComponentInChildren<rotat>();
-            //Debug.Log("hit");
-            *//*if (pcc.currentHealth <= pcc.maxHealth)
-                pcc.currentHealth -= (collision.relativeVelocity.magnitude * 0.5f);*//*
-            Debug.Log("attacker name: " + collision.gameObject.name);
-            Debug.Log("currH: " + pcc.currentHealth);
-            Debug.Log("maxH: " + pcc.maxHealth);
-
-        }
-        Debug.Log("collider working outside.");
-    }
-  */  private void Start()
-    {
-    /*    Display = GetComponentInParent<display>();
-        maxHealth = currentHealth = Display.maxHealth;
-*/
+        view = GetComponent<PhotonView>();
     }
 
     void Awake()
@@ -67,32 +44,36 @@ public class rotat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GetComponentInParent<PrometeoCarController>().AIController)
+        if (view.IsMine)
         {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                bl = true;
 
-                //            transform.Rotate(0, 0, 30);
-            }
+            if (!GetComponentInParent<PrometeoCarController>().AIController)
+            {
+                if (Input.GetKeyDown(KeyCode.C))
+                {
+                    bl = true;
 
-            if (Input.GetKeyUp(KeyCode.C))
-            {
-                //Debug.LogError("error ");
-                bl = false;
-                return;
+                    //            transform.Rotate(0, 0, 30);
+                }
+
+                if (Input.GetKeyUp(KeyCode.C))
+                {
+                    //Debug.LogError("error ");
+                    bl = false;
+                    return;
+                }
             }
-        }
-        if(bl)
-        {
-            if (GetComponentInParent<PrometeoCarController>().botType.Equals("tombstone"))
+            if (bl)
             {
-                transform.Rotate(Vector3.right * rotateSpeed * Time.deltaTime);
-                StartCoroutine(wait());
-            }
-            else
-            {
-                transform.Rotate(Vector3.back * rotateSpeed * Time.deltaTime);
+                if (GetComponentInParent<PrometeoCarController>().botType.Equals("tombstone"))
+                {
+                    transform.Rotate(Vector3.right * rotateSpeed * Time.deltaTime);
+                    StartCoroutine(wait());
+                }
+                else
+                {
+                    transform.Rotate(Vector3.back * rotateSpeed * Time.deltaTime);
+                }
             }
         }
       /*  if (throttlePTI.buttonPressed)
