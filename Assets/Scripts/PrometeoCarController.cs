@@ -186,6 +186,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     PhotonView View;
     private void OnCollisionStay(Collision collision)
     {
+
         if (collision.collider.name.Equals("Axe"))
         {
             //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);

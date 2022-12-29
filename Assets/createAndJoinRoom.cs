@@ -11,6 +11,8 @@ public class createAndJoinRoom : MonoBehaviourPunCallbacks
 {
     public InputField createInput;
     public InputField joinInput;
+    public GameObject panl;
+    public GameObject loading;
 
     public GameObject PlayerObj;
     public void createRoom()
@@ -26,7 +28,9 @@ public class createAndJoinRoom : MonoBehaviourPunCallbacks
     }
     public override void OnJoinedRoom()
     {
-        // PhotonNetwork.LoadLevel("GamePlay");
+        panl.SetActive(false);
+        loading.SetActive(false);
+      //  PhotonNetwork.LoadLevel("GamePlay");
         
         PhotonNetwork.Instantiate(PlayerObj.name, Vector3.zero, Quaternion.identity);
     }

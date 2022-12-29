@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
+using Random = UnityEngine.Random;
 
-public class HealthBar : MonoBehaviour
+
+public class HealthBar : MonoBehaviourPun, IPunObservable
 {
     public Text speed;
     public Text mass;
@@ -15,17 +18,50 @@ public class HealthBar : MonoBehaviour
     public float currentHealth = 0;
 
     Rigidbody rd;
+    PhotonView view;
+    public float ran = 0.0f;
 
-    
+
     PrometeoCarController controller;
-    // Start is called before the first frame update
+
+    private string recievedData = "ok!";
+    private float test = 0;
     void Start()
     {
+
         currentHealth = maxHealth;
         rd = GetComponent<Rigidbody>();
-        controller =GetComponent<PrometeoCarController>();
+        controller = GetComponent<PrometeoCarController>();
         InvokeRepeating("CarSpeedUI", 0f, 0.1f);
+        view = GetComponent<PhotonView>();
+
     }
+    public void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    public void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+   
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        { 
+            stream.SendNext(currentHealth);
+        }
+        else if (stream.IsReading)
+        {
+            test = (float)stream.ReceiveNext();
+        }
+    }
+
+    // Start is called before the first frame update
+   
     public void DamageHealth(float damage, HealthBar hb)
     {
         // Adjust health
@@ -84,9 +120,12 @@ public class HealthBar : MonoBehaviour
 
     }
     // Update is called once per frame
-    private void Update()
+     void Update()
     {
-        if(currentHealth==0 && this.tag.Equals("Player"))
+      ran= Random.Range(0, 1000);
+      //  Debug.Log(ran);
+        Debug.Log("test="+test);
+        if (currentHealth==0 && this.tag.Equals("Player"))
         {
             GameManager.Instance.GameLoose(1);
         }
