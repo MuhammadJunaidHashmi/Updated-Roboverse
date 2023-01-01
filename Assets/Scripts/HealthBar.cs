@@ -16,7 +16,9 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
     public Slider slider;
     public float maxHealth = 10;
     public float currentHealth = 0;
-
+    private GameObject[] players;
+    private int index = 0;
+    bool check = false;
     Rigidbody rd;
     PhotonView view;
     public float ran = 0.0f;
@@ -35,6 +37,24 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
         InvokeRepeating("CarSpeedUI", 0f, 0.1f);
         view = GetComponent<PhotonView>();
 
+
+        StartCoroutine(assign());
+       
+
+    }
+    IEnumerator assign()
+    {
+        yield return new WaitForSeconds(10);
+        players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i].GetComponent<PhotonView>().IsMine == false)
+            {
+                index = i;
+               
+            }
+
+        }
     }
     public void OnEnable()
     {
@@ -122,10 +142,11 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
      void Update()
     {
-      ran= Random.Range(0, 1000);
-      //  Debug.Log(ran);
-        Debug.Log("test="+test);
-        if (currentHealth==0 && this.tag.Equals("Player"))
+        
+  
+            
+
+            if (currentHealth==0 && this.tag.Equals("Player"))
         {
             GameManager.Instance.GameLoose(1);
         }
@@ -133,7 +154,16 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
         {
             GameManager.Instance.GameLoose(2);
         }
-
+        StartCoroutine(wait());
+        if(check)
+        {
+            players[index].GetComponent<HealthBar>().slider.value = test;
+        }
+    }
+    IEnumerator wait()
+    {
+        yield return new WaitForSeconds(15);
+        check = true;
     }
 
 }

@@ -32,23 +32,28 @@ public class createAndJoinRoom : MonoBehaviourPunCallbacks
     {
         //panl.SetActive(false);
         // loading.SetActive(false);
-        while(check)
-        {
+     //   while(check)
+       // {
             StartCoroutine(startGame());
-        }
+        //}
      
         
 
     }
     IEnumerator startGame()
     {
-        Debug.Log("counts:  "+PhotonNetwork.CountOfPlayers);
+        //Debug.Log("counts:  "+PhotonNetwork.CountOfPlayers);
             yield return new WaitForSeconds(1);
-            if (PhotonNetwork.CountOfPlayers >= 2)
-            {
-            check = false;
+
+            //if (PhotonNetwork.CountOfPlayers >= 2)
+           // {
+             //check = false;
                  PhotonNetwork.LoadLevel("GamePlay");
-            }  
+            //}  
+            //else
+            //  {
+          //  StartCoroutine(startGame());
+        // }
     }
   
 }
