@@ -236,10 +236,8 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     {
         View = GetComponent<PhotonView>();
 
-        if (View.IsMine)
-        {
             _ = this.name.Equals(BotType.tombstone) ? botType = BotType.tombstone : botType = BotType.thinBot;
-            healthBar = GetComponent<HealthBar>();
+            healthBar  = gameObject.GetComponent<HealthBar>();
             maxHealth = currentHealth = healthBar.maxHealth;
             /*currentHealth = maxHealth;*/
             //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
@@ -360,7 +358,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
                     " PrometeoCarController component.";
                     Debug.LogWarning(ex);
                 }
-            }
+            
         }
     }
 

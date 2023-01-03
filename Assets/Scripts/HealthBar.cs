@@ -30,6 +30,7 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
     private float test = 0;
     void Start()
     {
+        
 
         currentHealth = maxHealth;
         rd = GetComponent<Rigidbody>();
@@ -51,6 +52,7 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
             if (players[i].GetComponent<PhotonView>().IsMine == false)
             {
                 index = i;
+                check = true;
                
             }
 
@@ -103,7 +105,7 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
     /// </summary>
     private void Die()
     {
-         GameManager.Instance.CheckDie();
+        // GameManager.Instance.CheckDie();
 
     }
     public void SetMaxHealth(float health)
@@ -130,14 +132,12 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
             
             velocity.text = "( "+ Math.Round(rd.velocity.x, 2)  + "," + Math.Round(rd.velocity.y, 2) + "," + Math.Round(rd.velocity.z, 2) + " )";
 
-        }
+            }
             catch (System.Exception ex)
             {
             
                 Debug.LogWarning("name " +this.name+ ex);
             }
-
-
     }
     // Update is called once per frame
      void Update()
@@ -154,16 +154,12 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
         {
             GameManager.Instance.GameLoose(2);
         }
-        StartCoroutine(wait());
+      
         if(check)
         {
             players[index].GetComponent<HealthBar>().slider.value = test;
         }
     }
-    IEnumerator wait()
-    {
-        yield return new WaitForSeconds(15);
-        check = true;
-    }
+   
 
 }

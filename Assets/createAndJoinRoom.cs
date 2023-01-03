@@ -12,15 +12,13 @@ public class createAndJoinRoom : MonoBehaviourPunCallbacks
 {
     public InputField createInput;
     public InputField joinInput;
-    public GameObject panl;
-    public GameObject loading;
-    bool check = true;
+    bool joined = false;
     
     public void createRoom()
     {
         PhotonNetwork.CreateRoom(createInput.text);
         Debug.Log("create");
-        Debug.Log("online: " + PhotonNetwork.CountOfPlayers);
+
     }
 
     public void JoinRoom()
@@ -30,30 +28,19 @@ public class createAndJoinRoom : MonoBehaviourPunCallbacks
     }
     public override void OnJoinedRoom()
     {
-        //panl.SetActive(false);
-        // loading.SetActive(false);
-     //   while(check)
-       // {
-            StartCoroutine(startGame());
-        //}
-     
-        
-
+        joined = true;
     }
-    IEnumerator startGame()
+    private void Update()
     {
-        //Debug.Log("counts:  "+PhotonNetwork.CountOfPlayers);
-            yield return new WaitForSeconds(1);
-
-            //if (PhotonNetwork.CountOfPlayers >= 2)
-           // {
-             //check = false;
-                 PhotonNetwork.LoadLevel("GamePlay");
-            //}  
-            //else
-            //  {
-          //  StartCoroutine(startGame());
-        // }
+        if (PhotonNetwork.PlayerList.Length==2&& PhotonNetwork.PlayerList.Length<=2)
+        {
+            if(joined)
+            {
+                joined = false;
+                PhotonNetwork.LoadLevel("GamePlay");
+            }
+         
+        }
     }
-  
+
 }
