@@ -360,6 +360,10 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
                 }
             
         }
+        if (!View.IsMine)
+        {
+            this.GetComponent<Rigidbody>().isKinematic = true;
+        }
     }
 
     IEnumerator Reset()
@@ -373,8 +377,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     void Update()
     {
 
-        if (View.IsMine)
-        {
+       
             // Display.slider.value = currentHealth;
             if (((this.transform.localEulerAngles.z > 170f) && (this.transform.localEulerAngles.z < 190f)) || (this.transform.localEulerAngles.z > 80f) && (this.transform.localEulerAngles.z < 100f))
                 StartCoroutine(Reset());
@@ -452,7 +455,8 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
             else if (!AIController)
             {
 
-
+            if (View.IsMine)
+            {
 
                 if (Input.GetKey(KeyCode.W))
                 {
@@ -498,6 +502,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
                 {
                     ResetSteeringAngle();
                 }
+            }
 
             }
             else
@@ -508,7 +513,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
 
             // We call the method AnimateWheelMeshes() in order to match the wheel collider movements with the 3D meshes of the wheels.
             AnimateWheelMeshes();
-        }
+        
     }
 
     void Inputs()

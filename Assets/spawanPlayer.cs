@@ -7,14 +7,17 @@ public class spawanPlayer : MonoBehaviour
 {
     public GameObject PlayerObj;
     public GameObject[] spawnpoints;
+    PhotonView view;
     // Start is called before the first frame update
     void Start()
     {
-    
-       
-     
-            if (PhotonNetwork.IsMasterClient)
+        view = GetComponent<PhotonView>();
+
+
+
+        if (PhotonNetwork.IsMasterClient)
             {
+          
                 PhotonNetwork.Instantiate(PlayerObj.name, spawnpoints[0].transform.position, Quaternion.identity);
 
             }
@@ -22,6 +25,7 @@ public class spawanPlayer : MonoBehaviour
         {
             PhotonNetwork.Instantiate(PlayerObj.name, spawnpoints[1].transform.position, Quaternion.identity);
         }
+
 
 
     }

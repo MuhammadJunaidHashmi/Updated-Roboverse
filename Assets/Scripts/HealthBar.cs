@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-using Random = UnityEngine.Random;
+
 
 
 public class HealthBar : MonoBehaviourPun, IPunObservable
@@ -155,7 +155,7 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
             GameManager.Instance.GameLoose(2);
         }
       
-        if(check)
+        if(check&& !view.IsMine)
         {
             players[index].GetComponent<HealthBar>().slider.value = test;
         }
