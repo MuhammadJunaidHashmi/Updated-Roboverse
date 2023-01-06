@@ -2,12 +2,14 @@
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 [System.Serializable]
 public class Selection_Elements
 {
     public GameObject LoadingScreen;
     public Slider FillBar;
+    public TMP_Text value;
     [Header("Player Attributes")]
     public Image Speed_Bar;
     public Image Handling_Bar;
@@ -65,8 +67,9 @@ public class GF_PlayerSelection : MonoBehaviour {
 		Time.timeScale = 1;
 		AudioListener.pause = false;
         Selection_UI.FillBar.value = 0;
-        Selection_UI.LoadingScreen.SetActive(false);
-		if (!GameManager.Instance.Initialized) {
+        //  Selection_UI.LoadingScreen.SetActive(false);
+        StartCoroutine(startGame());
+        if (!GameManager.Instance.Initialized) {
 			InitializeGame();
 		}
         GetPlayerInfo();
@@ -86,12 +89,20 @@ public class GF_PlayerSelection : MonoBehaviour {
     void Update(){
         if (async != null)
         {
+            async.allowSceneActivation = false;
+            Selection_UI.FillBar.value += async.progress / 800;
+            Selection_UI.value.text = (Mathf.Floor(Selection_UI.FillBar.value * 100)) + "%";
+            if (Selection_UI.FillBar.value >= (Selection_UI.FillBar.maxValue))
+                async.allowSceneActivation = true;
+        }
+        /*if (async != null)
+        {
             Selection_UI.FillBar.value = async.progress;
             if (async.progress >= 0.9f)
             {
                 Selection_UI.FillBar.value = 1.0f;
             }
-        }
+        }*/
     }
 
     void GetPlayerInfo(){
@@ -156,6 +167,12 @@ public class GF_PlayerSelection : MonoBehaviour {
         GameManager.Instance.CurrentPlayer = current+1;
 		Selection_UI.LoadingScreen.SetActive(true);
         StartCoroutine(LevelStart());
+    }
+
+    IEnumerator startGame()
+    {
+        async = SceneManager.LoadSceneAsync(NextScene.ToString());
+        yield return async;
     }
 
     IEnumerator LevelStart(){
