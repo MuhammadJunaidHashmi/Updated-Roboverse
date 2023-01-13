@@ -15,9 +15,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
+
 public class PrometeoCarController : MonoBehaviourPunCallbacks
 {
-
+    
     //CAR SETUP
 
     [Space(20)]
@@ -50,6 +51,9 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     private float maxHealth = 100;
     private float currentHealth = 0;
     HealthBar healthBar;
+
+
+   
     //WHEELS
 
     // [Header("WHEELS")]
@@ -173,6 +177,12 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     WheelFrictionCurve RRwheelFriction;
     float RRWextremumSlip;
 
+   
+    public CanvusColorObject canvusObj;
+    public GameObject[] canvusobjs; 
+
+
+ 
     public bool AIController = false;       //use ai controller.
     bool first = false;
     public enum BotType
@@ -235,7 +245,19 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     void Start()
     {
         View = GetComponent<PhotonView>();
-
+        if(View.IsMine)
+        {
+            canvusobjs[0].GetComponent<Image>().color= new Color32(7, 0, 255,255);
+            canvusobjs[1].GetComponent<Image>().color = new Color32(7, 0, 255, 255);
+            canvusobjs[2].GetComponent<Text>().color = new Color32(7, 0, 255, 255);
+        }
+        else
+        {
+            this.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+            canvusobjs[0].GetComponent<Image>().color = new Color32(255, 0, 4, 255);
+            canvusobjs[1].GetComponent<Image>().color = new Color32(255, 0, 4, 255);
+            canvusobjs[2].GetComponent<Text>().color = new Color32(255, 0, 4, 255);
+        }
             _ = this.name.Equals(BotType.tombstone) ? botType = BotType.tombstone : botType = BotType.thinBot;
             healthBar  = gameObject.GetComponent<HealthBar>();
             maxHealth = currentHealth = healthBar.maxHealth;
@@ -373,8 +395,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     void Update()
     {
 
-        if (View.IsMine)
-        {
+      
             // Display.slider.value = currentHealth;
             if (((this.transform.localEulerAngles.z > 170f) && (this.transform.localEulerAngles.z < 190f)) || (this.transform.localEulerAngles.z > 80f) && (this.transform.localEulerAngles.z < 100f))
                 StartCoroutine(Reset());
@@ -453,7 +474,8 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
             {
 
 
-
+            if (View.IsMine)
+            {
                 if (Input.GetKey(KeyCode.W))
                 {
                     CancelInvoke("DecelerateCar");
@@ -498,7 +520,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
                 {
                     ResetSteeringAngle();
                 }
-
+            }
             }
             else
             {
@@ -508,7 +530,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
 
             // We call the method AnimateWheelMeshes() in order to match the wheel collider movements with the 3D meshes of the wheels.
             AnimateWheelMeshes();
-        }
+        
     }
 
     void Inputs()
@@ -1069,4 +1091,11 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
         }
     }
 
+}
+
+public class CanvusColorObject
+{
+    public GameObject fill;
+    public GameObject name;
+    public GameObject text;
 }
