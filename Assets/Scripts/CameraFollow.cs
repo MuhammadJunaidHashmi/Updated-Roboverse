@@ -12,13 +12,22 @@ public class CameraFollow : MonoBehaviour {
 	Vector3 initialCameraPosition;
 	Vector3 initialCarPosition;
 	Vector3 absoluteInitCameraPosition;
-
+	GameObject[] playerslist=null;
 	void Start(){
+
+		
 		initialCameraPosition = gameObject.transform.position;
 		initialCarPosition = carTransform.position;
 		absoluteInitCameraPosition = initialCameraPosition - initialCarPosition;
+		StartCoroutine(check());
 	}
+	IEnumerator check()
+	{
+		yield return new WaitForSeconds(5);
 
+		playerslist = GameObject.FindGameObjectsWithTag("Player");
+		//Debug.Log("tombstone: " + playerslist.Length);
+	}
 	public void SetPlayerBot(GameObject player)
 	{
 
@@ -35,6 +44,18 @@ public class CameraFollow : MonoBehaviour {
 	}
 	void FixedUpdate()
 	{
+		if (playerslist != null)
+		{
+			if (playerslist.Length == 2)
+			{
+				var centerX = 0f;
+				var centerZ = 0f;
+				centerX = (playerslist[0].transform.position.x + playerslist[1].transform.position.x) / 2;
+				centerZ = (playerslist[0].transform.position.z + playerslist[1].transform.position.z) / 2;
+
+				carTransform.position = new Vector3(centerX, 0, centerZ);
+			}
+		}
 		//Look at car
 		Vector3 _lookDirection = (new Vector3(carTransform.position.x, carTransform.position.y, carTransform.position.z)) - transform.position;
 		Quaternion _rot = Quaternion.LookRotation(_lookDirection, Vector3.up);
