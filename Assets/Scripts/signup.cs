@@ -8,17 +8,19 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using TMPro;
 
 
 public class signup : MonoBehaviour
 {
     
     InputField outputArea;
-    public InputField email;
-    public InputField password;
-    public InputField C_password;
+    public TMP_InputField name;
+    public TMP_InputField email;
+    public TMP_InputField password;
+    public TMP_InputField C_password;
     public string url;
-    public Text txt;
+    public TMP_Text txt;
     public GameObject Logintosigninss;
     public GameObject signintoliginss;
     // Validate if a string is a email
@@ -32,7 +34,7 @@ public class signup : MonoBehaviour
         gameObject.GetComponent<Button>().onClick.AddListener(PostSignup);
     }
 
-    void PostSignup()
+    public void PostSignup()
     {
         if (!validateEmailRegex.IsMatch(email.text))
         {
