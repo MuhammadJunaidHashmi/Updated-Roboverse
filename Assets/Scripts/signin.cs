@@ -4,9 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Net.Http;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Net;
+using TMPro;
 
 
 namespace asdf
@@ -14,10 +16,10 @@ namespace asdf
     public class signin : MonoBehaviour
     {
         InputField outputArea;
-        public InputField email;
-        public InputField password;
+        public TMP_InputField email;
+        public TMP_InputField password;
         public GameObject loginScreen;
-        public GameObject newScreen;
+        public string url;
         private string auth;
         public string getAuth()
         {
@@ -25,13 +27,9 @@ namespace asdf
             return auth;
         }
 
-        public string url;
-        void Start()
-        {
-            outputArea = GameObject.Find("outs").GetComponent<InputField>();
-            gameObject.GetComponent<Button>().onClick.AddListener(PostSignin);
-        }
-        void PostSignin()
+        
+      
+       public void PostSignin()
         {
             StartCoroutine(Uploads());
         }
@@ -78,7 +76,7 @@ namespace asdf
                 }
                 Debug.Log(auth);
                 loginScreen.SetActive(false);
-                newScreen.SetActive(true);
+                SceneManager.LoadScene("MainMenu");
                 Debug.Log("Form upload complete!");
             }
         }
