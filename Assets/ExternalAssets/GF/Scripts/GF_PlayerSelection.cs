@@ -110,7 +110,9 @@ public class GF_PlayerSelection : MonoBehaviour {
         {
             if (i == current)
             {
+                Players[i].PlayerObject.transform.position = new Vector3(Players[i].PlayerObject.transform.position.x, 0.5f, Players[i].PlayerObject.transform.position.z);
                 Players[i].PlayerObject.SetActive(true);
+                
             }
             else if (i != current)
             {
@@ -158,6 +160,7 @@ public class GF_PlayerSelection : MonoBehaviour {
     }
 
     public void Next(){
+
         current++;
         GetPlayerInfo();
     }
