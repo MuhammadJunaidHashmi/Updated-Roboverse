@@ -71,12 +71,18 @@ namespace asdf
                         if (entry.Key == "Authorization")
                         {
                             auth = entry.Value;
+                            Debug.Log("val: " + auth);
                         }
                     }
                 }
-                Debug.Log(auth);
-                loginScreen.SetActive(false);
-                SceneManager.LoadScene("MainMenu");
+                
+                if (auth != null)
+                {
+
+                    loginScreen.SetActive(false);
+                    SceneManager.LoadScene("MainMenu");
+
+                }
                 Debug.Log("Form upload complete!");
             }
         }

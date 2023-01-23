@@ -6,28 +6,44 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
-
+using TMPro;
 
 public class createAndJoinRoom : MonoBehaviourPunCallbacks
 {
-    public InputField createInput;
-    public InputField joinInput;
+    public TMP_InputField createInput;
+    public TMP_InputField joinInput;
+    public GameObject error;
     bool joined = false;
     
     public void createRoom()
     {
         PhotonNetwork.CreateRoom(createInput.text);
-        Debug.Log("create");
+        Debug.LogWarning("create");
 
     }
 
+   public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        error.GetComponent<TMP_Text>().text = "Invalid Room";
+    }
     public void JoinRoom()
     {
-
-        PhotonNetwork.JoinRoom(joinInput.text);
+        if(joinInput.text=="")
+        {
+            error.GetComponent<TMP_Text>().text = "Enter Room Name";
+            error.SetActive(true);
+            return;
+        }
+        if (!PhotonNetwork.JoinRoom(joinInput.text))
+        {
+            error.GetComponent<TMP_Text>().text = "Invalid Room";
+            error.SetActive(true);
+        }       
     }
     public override void OnJoinedRoom()
     {
+        error.SetActive(false);
+       // var roomName = PhotonNetwork.CurrentRoom.Name;
         joined = true;
     }
     private void Update()
