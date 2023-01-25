@@ -12,9 +12,16 @@ public class Usersignup
     public string password;
     public string password_confirmation;
 }
-
-
 [System.Serializable]
+public class Rename
+{
+    public int id;
+    public string name;
+}
+
+
+
+    [System.Serializable]
 public class Rootsignin
 {
     public Usersignin user;
