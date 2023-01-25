@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 
 
+
 public class signup : MonoBehaviour
 {
     
@@ -64,6 +65,7 @@ public class signup : MonoBehaviour
     {
         
         Usersignup user = new Usersignup();
+        user.name = name.text;
         user.email = email.text;
         user.password = password.text;
         user.password_confirmation = C_password.text;
@@ -76,21 +78,36 @@ public class signup : MonoBehaviour
         req.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
         req.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         req.SetRequestHeader("Content-Type", "application/json");
-        Debug.Log(json);
+        //Debug.Log(json);
         yield return req.SendWebRequest();
-
-        RootsignupRes rootRes = new RootsignupRes();
-        rootRes= JsonUtility.FromJson<RootsignupRes>(req.downloadHandler.text);
-        if (rootRes.status != 200)
+        if (req.result != UnityWebRequest.Result.Success)
         {
             Debug.Log("error: " + req.error);
         }
+    
         else
         {
+            string response = req.downloadHandler.text;
+            Debug.Log(response);
 
-            Logintosigninss.SetActive(false);
-            signintoliginss.SetActive(true);
-            Debug.Log("Form upload complete!");
+            RootsignupRes rootRes = new RootsignupRes();
+            rootRes = JsonUtility.FromJson<RootsignupRes>(response);
+            Debug.Log("code:"+rootRes.status);
+            if (rootRes.status == 500)
+            {
+                txt.text = "User already exists";
+               // Loader.SetActive(false);
+               // StartCoroutine(DisplayMessage("User already exists"));
+            }
+            else if (rootRes.status == 200)
+            {
+                Debug.Log("email: " + rootRes.user.email);
+                 Logintosigninss.SetActive(false);
+                 signintoliginss.SetActive(true);
+                 Debug.Log("Form upload complete!");
+            }
+
+
         }
     }
 

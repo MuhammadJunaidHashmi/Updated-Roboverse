@@ -19,26 +19,44 @@ namespace asdf
         public TMP_InputField email;
         public TMP_InputField password;
         public GameObject loginScreen;
+        public GameObject loader;
         public string url;
-        private string auth;
-        public string getAuth()
+        string ExistingEmail;
+        string ExistingPassword;
+        public void Start()
         {
-            Debug.Log(auth);
-            return auth;
+            ExistingEmail = PlayerPrefs.GetString("Email");
+            ExistingPassword = PlayerPrefs.GetString("Password");
+            Debug.Log(ExistingEmail.Length);
+            Debug.Log(ExistingPassword.Length);
+            if (ExistingEmail.Length != 0)
+            {
+                loader.SetActive(true);
+                // Signin.enabled = false;
+                email.text = ExistingEmail;
+                password.text = ExistingPassword;
+                StartCoroutine(Uploads());
+            }
         }
-
-        
-      
-       public void PostSignin()
+        public void PostSignin()
         {
+           
             StartCoroutine(Uploads());
         }
 
         IEnumerator Uploads()
         {
             Usersignin user = new Usersignin();
-            user.email = email.text;
-            user.password = password.text;
+            if (ExistingEmail.Length == 0)
+            {
+                user.email = email.text;
+                user.password = password.text;
+            }
+            else if (ExistingEmail.Length != 0)
+            {
+                user.email = ExistingEmail;
+                user.password = ExistingPassword;
+            }
             Rootsignin root = new Rootsignin();
             root.user = user;
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(root);
@@ -49,43 +67,53 @@ namespace asdf
             req.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             req.SetRequestHeader("Content-Type", "application/json");
             yield return req.SendWebRequest();
-            //Debug.LogError(req.result.);
-            //Debug.Log(req);
-            //Debug.Log(req.downloadHandler);
-        //    string res = req.downloadHandler.text;
-          //  RootsignupRes rootRes = new RootsignupRes();
-          //  rootRes = JsonUtility.FromJson<RootsignupRes>(req.downloadHandler.text);
-
-
-
             if (req.result != UnityWebRequest.Result.Success)
             {
                 Debug.Log("error: " + req.error);
             }
+
             else
             {
-                if (req.GetResponseHeaders().Values.Count > 0)
-                {
-                    foreach (KeyValuePair<string, string> entry in req.GetResponseHeaders())
-                    {
-                        if (entry.Key == "Authorization")
-                        {
-                            auth = entry.Value;
-                            Debug.Log("val: " + auth);
-                        }
-                    }
-                }
-                
-                if (auth != null)
-                {
+                string response = req.downloadHandler.text;
+                Debug.Log(response);
 
+                SignInResponse rootRes = new SignInResponse();
+                rootRes = JsonUtility.FromJson<SignInResponse>(response);
+                if (rootRes.data.status == 200)
+                {
+                  
+                    //Signin.enabled = true;
+                    int id = rootRes.data.user.id;
+                    string playername = rootRes.data.user.name;
+                    PlayerPrefs.SetInt("playerID", id);//player ID
+                    //loader.SetActive(false);
+                  //  StartCoroutine(check(deserialized.data.user.id));
+                    loader.SetActive(false);
+                    PlayerPrefs.SetString("Email", email.text);
+                    PlayerPrefs.SetString("Password", password.text);
+                    PlayerPrefs.SetString("Name", playername);
+                    PlayerPrefs.Save();
                     loginScreen.SetActive(false);
                     SceneManager.LoadScene("MainMenu");
-
+                    Debug.Log("Form upload complete!");
                 }
-                Debug.Log("Form upload complete!");
+                if (rootRes.data.status == 404)
+                {
+                   // Loader.SetActive(false);
+                    //StartCoroutine(DisplayMessage("No User Exist with this Email!"));
+                }
+                else if (rootRes.data.status == 401)
+                {
+                    //Loader.SetActive(false);
+                    //StartCoroutine(DisplayMessage("Invalid Password!"));
+                }
+
+               
+                
             }
         }
+
+       
 
 
     }
