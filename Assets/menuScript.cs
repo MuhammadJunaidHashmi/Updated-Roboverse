@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 
 public class menuScript : MonoBehaviourPunCallbacks
@@ -15,7 +16,13 @@ public class menuScript : MonoBehaviourPunCallbacks
     public GameObject quit;
     public Button joinBtn;
     public Button createBtn;
+    public TMP_Text playerName;
 
+    public void Start()
+    {
+        playerName.text= PlayerPrefs.GetString("Name");
+
+    }
 
     public void clickMuiltiplyer()
     {
