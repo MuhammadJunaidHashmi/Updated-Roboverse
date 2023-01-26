@@ -71,8 +71,7 @@ public class GF_PlayerSelection : MonoBehaviour {
 		Time.timeScale = 1;
 		AudioListener.pause = false;
         Selection_UI.FillBar.value = 0;
-        //  Selection_UI.LoadingScreen.SetActive(false);
-        StartCoroutine(startGame());
+        Selection_UI.LoadingScreen.SetActive(false);
         if (!GameManager.Instance.Initialized) {
 			InitializeGame();
 		}
@@ -97,7 +96,10 @@ public class GF_PlayerSelection : MonoBehaviour {
             Selection_UI.FillBar.value += async.progress / progressSpeed;
             Selection_UI.value.text = (Mathf.Floor(Selection_UI.FillBar.value * 100)) + "%";
             if (Selection_UI.FillBar.value >= (Selection_UI.FillBar.maxValue))
+            {
                 async.allowSceneActivation = true;
+                StartCoroutine(LevelStart());
+            }
             if (Mathf.Ceil(Selection_UI.FillBar.value * 100) < (100 / uI_Controler.UiImages.Count))
             {
                 if (UiImageOneTime && (Mathf.Ceil(Selection_UI.FillBar.value * 100)) % ((100 / uI_Controler.UiImages.Count) - 2) == 0)
@@ -182,7 +184,7 @@ public class GF_PlayerSelection : MonoBehaviour {
 		GameManager.Instance.SessionStatus = 1;
         GameManager.Instance.CurrentPlayer = current+1;
 		Selection_UI.LoadingScreen.SetActive(true);
-        StartCoroutine(LevelStart());
+        StartCoroutine(startGame());
     }
 
     IEnumerator startGame()
