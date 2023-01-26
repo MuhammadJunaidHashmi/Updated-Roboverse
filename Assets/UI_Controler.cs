@@ -7,52 +7,60 @@ public class UI_Controler : MonoBehaviour
 {
     public List<GameObject> UiImages;
     public float FadingSpeed = 0.25f;
-    int index = 0;
+    public float FadingTimeSpeed = 0.1f;
+    public GF_PlayerSelection gF_PlayerSelection;
+    public int index = 0;
 
     public void Start()
     {
-        for (int i = 0; i < 1; i++)
+        if (UiImages.Count != 0)
         {
-            StartCoroutine(FadeIN(UiImages[i]));
-        } 
+            StartCoroutine(FadeIN());
+        }
     }
 
-    IEnumerator FadeIN(GameObject obj)
+    IEnumerator FadeIN()
     {
-        Debug.Log("In start");
-        obj.SetActive(true);
-        float alpha = obj.gameObject.GetComponent<Image>().color.a;
-
-        while (alpha <= 1)
+        UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, 0.01f);
+        if (index == 0)
         {
-            Debug.Log("out-" + alpha);
-            alpha -= Time.deltaTime * FadingSpeed;
-            obj.gameObject.GetComponent<Image>().color = new Color(obj.gameObject.GetComponent<Image>().color.r, obj.gameObject.GetComponent<Image>().color.g, obj.gameObject.GetComponent<Image>().color.b, alpha);
+            UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, 0.4f);
         }
-        yield return new WaitForSeconds(UiImages.Count - 1);
-        Debug.Log("In end");
-        StartCoroutine(FadeOut(obj));
-    }
-    
-    IEnumerator FadeOut(GameObject obj)
-    {
-        index++;
-        Debug.Log("Out start");
-        float alpha = obj.gameObject.GetComponent<Image>().color.a;
-        while (alpha > 0.3f)
+        UiImages[index].SetActive(true);
+        float alpha = UiImages[index].gameObject.GetComponent<Image>().color.a;
+        while (alpha <= 1f)
         {
-            Debug.Log("out-" + alpha);
-            alpha -= Time.deltaTime * FadingSpeed;
-            obj.gameObject.GetComponent<Image>().color = new Color(obj.gameObject.GetComponent<Image>().color.r, obj.gameObject.GetComponent<Image>().color.g, obj.gameObject.GetComponent<Image>().color.b, alpha);
-            yield return null;
-            if (alpha < 0.5f)
-            {
-                if (index <= UiImages.Count)
-                    StartCoroutine(FadeIN(UiImages[index]));
-            }
+            alpha += FadingSpeed;
+            UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, alpha);
+            yield return new WaitForSeconds(FadingTimeSpeed);
         }
-        Debug.Log("Out end");
+        UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, 1.1f);
         yield return new WaitForSeconds(1);
-        obj.SetActive(false);
     }
+
+    public IEnumerator FadeOut()
+    {
+        UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, 1f);
+
+        float alpha = UiImages[index].gameObject.GetComponent<Image>().color.a;
+
+        while (alpha > 0.4f)
+        {
+            alpha -= FadingSpeed;
+            UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, alpha);
+            yield return new WaitForSeconds(FadingTimeSpeed);
+        }
+
+        Debug.Log("check-" + ((int)(gF_PlayerSelection.Selection_UI.FillBar.value * 100)));
+
+        if ((index + 1) != UiImages.Count)
+        {
+            UiImages[index].SetActive(false);
+            gF_PlayerSelection.UiImageOneTime = true;
+            index++;
+            StartCoroutine(FadeIN());
+        }
+        yield return new WaitForSeconds(1);
+    }
+
 }
