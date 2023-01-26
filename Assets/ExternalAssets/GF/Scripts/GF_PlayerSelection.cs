@@ -94,6 +94,7 @@ public class GF_PlayerSelection : MonoBehaviour {
         {
             async.allowSceneActivation = false;
             Selection_UI.FillBar.value += async.progress / progressSpeed;
+            Debug.Log("asy=" + async.progress);
             Selection_UI.value.text = (Mathf.Floor(Selection_UI.FillBar.value * 100)) + "%";
             if (Selection_UI.FillBar.value >= (Selection_UI.FillBar.maxValue))
             {
