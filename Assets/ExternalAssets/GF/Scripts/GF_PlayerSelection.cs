@@ -42,6 +42,8 @@ public class PlayerAttributes{
 }
 
 public class GF_PlayerSelection : MonoBehaviour {
+    [Header("Loading Panel")]
+    public UI_Controler uI_Controler;
 
     [Header("Scene Selection")]
     public Scenes PreviousScene;
@@ -62,6 +64,8 @@ public class GF_PlayerSelection : MonoBehaviour {
 
     AsyncOperation async = null;
     private int current;
+    private float progressSpeed = 400f;
+    public bool UiImageOneTime = true;
 
     void Start(){
 		Time.timeScale = 1;
@@ -90,19 +94,28 @@ public class GF_PlayerSelection : MonoBehaviour {
         if (async != null)
         {
             async.allowSceneActivation = false;
-            Selection_UI.FillBar.value += async.progress / 800;
+            Selection_UI.FillBar.value += async.progress / progressSpeed;
             Selection_UI.value.text = (Mathf.Floor(Selection_UI.FillBar.value * 100)) + "%";
             if (Selection_UI.FillBar.value >= (Selection_UI.FillBar.maxValue))
                 async.allowSceneActivation = true;
-        }
-        /*if (async != null)
-        {
-            Selection_UI.FillBar.value = async.progress;
-            if (async.progress >= 0.9f)
+            if (Mathf.Ceil(Selection_UI.FillBar.value * 100) < (100 / uI_Controler.UiImages.Count))
             {
-                Selection_UI.FillBar.value = 1.0f;
+                if (UiImageOneTime && (Mathf.Ceil(Selection_UI.FillBar.value * 100)) % ((100 / uI_Controler.UiImages.Count) - 2) == 0)
+                {
+                    StartCoroutine(uI_Controler.FadeOut());
+                    UiImageOneTime = false;
+                }
             }
-        }*/
+            else
+            {
+                if (UiImageOneTime && (Mathf.Ceil(Selection_UI.FillBar.value * 100)) % ((100 / uI_Controler.UiImages.Count) - 1) == 0)
+                {
+                    StartCoroutine(uI_Controler.FadeOut());
+                    UiImageOneTime = false;
+                }
+            }
+        }
+
     }
 
     void GetPlayerInfo(){
