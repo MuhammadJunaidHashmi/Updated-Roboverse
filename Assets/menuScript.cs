@@ -20,6 +20,7 @@ public class menuScript : MonoBehaviourPunCallbacks
     public GameObject renameScreen;
     public TMP_Text playerName;
     public TMP_InputField playerRename;
+    public GameObject loader;
     public string url;
 
     public void Start()
@@ -35,6 +36,7 @@ public class menuScript : MonoBehaviourPunCallbacks
     }
     public void updateName()
     {
+        loader.SetActive(true);
         StartCoroutine(rename());
     }
 
@@ -77,6 +79,7 @@ public class menuScript : MonoBehaviourPunCallbacks
             }
             else if (rootRes.status == 200)
             {
+                loader.SetActive(false);
                 PlayerPrefs.SetString("Name",playerRename.text);
                 playerName.text = PlayerPrefs.GetString("Name");
                 renameScreen.SetActive(false);
