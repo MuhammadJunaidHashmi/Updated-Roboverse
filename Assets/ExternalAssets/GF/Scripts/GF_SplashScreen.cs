@@ -12,9 +12,13 @@ public class Selection_Element
 
 	public Slider FillBar;
 	public TMP_Text value;
-	public GameObject loginbtn;
+	public GameObject titleScreen;
+	public GameObject signupScreen;
+	public GameObject loginScreen;
+
 
 }
+
 
 public class GF_SplashScreen : MonoBehaviour {
 
@@ -64,11 +68,31 @@ public class GF_SplashScreen : MonoBehaviour {
 	}
 	IEnumerator StartGame(){
 		yield return new WaitForSeconds(WaitTime);
-		Selection_UI.loginbtn.SetActive(false);
+		Selection_UI.titleScreen.SetActive(false);
 		Selection_UI.LoadingScreen.SetActive(true);
 		
 		async = SceneManager.LoadSceneAsync(NextScene.ToString());
 		yield return async;
 		
+	}
+
+	public void login()
+    {
+		Selection_UI.titleScreen.SetActive(false);
+		Selection_UI.signupScreen.SetActive(false);
+		Selection_UI.loginScreen.SetActive(true);
+	}
+	public void closeLogin()
+    {
+		Selection_UI.loginScreen.SetActive(false);
+		Selection_UI.signupScreen.SetActive(false);
+		Selection_UI.titleScreen.SetActive(true);
+
+	}
+	public void signup()
+	{
+		Selection_UI.loginScreen.SetActive(false);
+		Selection_UI.signupScreen.SetActive(true);
+
 	}
 }
