@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class UI_Controler : MonoBehaviour
 {
     public List<GameObject> UiImages;
-    public float FadingSpeed = 0.25f;
-    public float FadingTimeSpeed = 0.1f;
+    public float FadingSpeed = 0.025f;
+    public float FadingTimeSpeed = 0.025f;
     public GF_PlayerSelection gF_PlayerSelection;
     public int index = 0;
 
@@ -50,8 +50,6 @@ public class UI_Controler : MonoBehaviour
             UiImages[index].gameObject.GetComponent<Image>().color = new Color(UiImages[index].gameObject.GetComponent<Image>().color.r, UiImages[index].gameObject.GetComponent<Image>().color.g, UiImages[index].gameObject.GetComponent<Image>().color.b, alpha);
             yield return new WaitForSeconds(FadingTimeSpeed);
         }
-
-        Debug.Log("check-" + ((int)(gF_PlayerSelection.Selection_UI.FillBar.value * 100)));
 
         if ((index + 1) != UiImages.Count)
         {
