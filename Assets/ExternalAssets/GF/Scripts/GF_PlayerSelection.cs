@@ -64,7 +64,7 @@ public class GF_PlayerSelection : MonoBehaviour {
 
     AsyncOperation async = null;
     private int current;
-    private float progressSpeed = 400f;
+    private float progressSpeed = 1f;
     public bool UiImageOneTime = true;
 
     void Start(){
@@ -93,8 +93,7 @@ public class GF_PlayerSelection : MonoBehaviour {
         if (async != null)
         {
             async.allowSceneActivation = false;
-            Selection_UI.FillBar.value += async.progress / progressSpeed;
-            Debug.Log("asy=" + async.progress);
+            Selection_UI.FillBar.value += progressSpeed / 20 * Time.deltaTime;
             Selection_UI.value.text = (Mathf.Floor(Selection_UI.FillBar.value * 100)) + "%";
             if (Selection_UI.FillBar.value >= (Selection_UI.FillBar.maxValue))
             {
