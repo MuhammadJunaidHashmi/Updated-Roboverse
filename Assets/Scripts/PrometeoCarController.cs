@@ -18,7 +18,7 @@ using Photon.Pun;
 
 public class PrometeoCarController : MonoBehaviourPunCallbacks
 {
-    
+
     //CAR SETUP
 
     [Space(20)]
@@ -53,7 +53,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     HealthBar healthBar;
 
 
-   
+
     //WHEELS
 
     // [Header("WHEELS")]
@@ -177,19 +177,21 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     WheelFrictionCurve RRwheelFriction;
     float RRWextremumSlip;
 
-   
+
     public CanvusColorObject canvusObj;
-    public GameObject[] canvusobjs; 
+    public GameObject[] canvusobjs;
+
+    public VariableJoystick VariableJoystick;
 
 
- 
+
     public bool AIController = false;       //use ai controller.
     bool first = false;
     public enum BotType
     {
-       tombstone,
-       tractor,
-       thinBot
+        tombstone,
+        tractor,
+        thinBot
     };
     public BotType botType = BotType.tombstone;
 
@@ -203,7 +205,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
             if (currentHealth <= maxHealth)
                 healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.1f, healthBar);
             //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
-            GoReverse();
+            //  GoReverse();
         }
         if (collision.collider.tag.Equals("rotator"))
         {
@@ -212,9 +214,9 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
             if (currentHealth <= maxHealth)
                 healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.1f, healthBar);
             //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
-            for(int i=0; i < 500 ; i++)
-                GoReverse();
-            Debug.Log("Reverse stay..");
+            for (int i = 0; i < 500; i++)
+                //     GoReverse();
+                Debug.Log("Reverse stay..");
         }
     }
 
@@ -222,7 +224,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     {
         if (collision.collider.name.Equals("Axe"))
         {
-           // Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
+            // Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
             if (currentHealth <= maxHealth)
                 healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.4f, healthBar);
             //
@@ -235,7 +237,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
             if (currentHealth <= maxHealth)
                 healthBar.DamageHealth(collision.relativeVelocity.magnitude * 0.2f, healthBar);
             //currentHealth -= (collision.relativeVelocity.magnitude * 0.1f);
-            GoReverse();
+            //  GoReverse();
             Debug.Log("Reverse enter..");
         }
     }
@@ -244,12 +246,21 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+    
+    throttleButton = GameObject.FindGameObjectWithTag("throttle");
+        reverseButton = GameObject.FindGameObjectWithTag("reverse");
+        handbrakeButton = GameObject.FindGameObjectWithTag("handbrake");
+        turnLeftButton = GameObject.FindGameObjectWithTag("left");
+        turnRightButton = GameObject.FindGameObjectWithTag("right");
+        VariableJoystick = GameObject.FindGameObjectWithTag("joystick").GetComponent<VariableJoystick>();
         View = GetComponent<PhotonView>();
-        if(View.IsMine)
+        if (View.IsMine)
         {
-            canvusobjs[0].GetComponent<Image>().color= new Color32(7, 0, 255,255);
+            canvusobjs[0].GetComponent<Image>().color = new Color32(7, 0, 255, 255);
             canvusobjs[1].GetComponent<Image>().color = new Color32(7, 0, 255, 255);
             canvusobjs[2].GetComponent<Text>().color = new Color32(7, 0, 255, 255);
+            
+
         }
         else
         {
@@ -258,129 +269,129 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
             canvusobjs[1].GetComponent<Image>().color = new Color32(255, 0, 4, 255);
             canvusobjs[2].GetComponent<Text>().color = new Color32(255, 0, 4, 255);
         }
-            _ = this.name.Equals(BotType.tombstone) ? botType = BotType.tombstone : botType = BotType.thinBot;
-            healthBar  = gameObject.GetComponent<HealthBar>();
-            maxHealth = currentHealth = healthBar.maxHealth;
-            /*currentHealth = maxHealth;*/
-            //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
-            //gameObject. Also, we define the center of mass of the car with the Vector3 given
-            //in the inspector.
-            carRigidbody = gameObject.GetComponent<Rigidbody>();
-            carRigidbody.centerOfMass = bodyMassCenter;
+        _ = this.name.Equals(BotType.tombstone) ? botType = BotType.tombstone : botType = BotType.thinBot;
+        healthBar = gameObject.GetComponent<HealthBar>();
+        maxHealth = currentHealth = healthBar.maxHealth;
+        /*currentHealth = maxHealth;*/
+        //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
+        //gameObject. Also, we define the center of mass of the car with the Vector3 given
+        //in the inspector.
+        carRigidbody = gameObject.GetComponent<Rigidbody>();
+        carRigidbody.centerOfMass = bodyMassCenter;
 
-            //Initial setup to calculate the drift value of the car. This part could look a bit
-            //complicated, but do not be afraid, the only thing we're doing here is to save the default
-            //friction values of the car wheels so we can set an appropiate drifting value later.
-            FLwheelFriction = new WheelFrictionCurve();
+        //Initial setup to calculate the drift value of the car. This part could look a bit
+        //complicated, but do not be afraid, the only thing we're doing here is to save the default
+        //friction values of the car wheels so we can set an appropiate drifting value later.
+        FLwheelFriction = new WheelFrictionCurve();
 
-            FLwheelFriction.extremumSlip = frontLeftCollider.sidewaysFriction.extremumSlip;
-            FLWextremumSlip = frontLeftCollider.sidewaysFriction.extremumSlip;
-            FLwheelFriction.extremumValue = frontLeftCollider.sidewaysFriction.extremumValue;
-            FLwheelFriction.asymptoteSlip = frontLeftCollider.sidewaysFriction.asymptoteSlip;
-            FLwheelFriction.asymptoteValue = frontLeftCollider.sidewaysFriction.asymptoteValue;
-            FLwheelFriction.stiffness = frontLeftCollider.sidewaysFriction.stiffness;
-            FRwheelFriction = new WheelFrictionCurve();
-            FRwheelFriction.extremumSlip = frontRightCollider.sidewaysFriction.extremumSlip;
-            FRWextremumSlip = frontRightCollider.sidewaysFriction.extremumSlip;
-            FRwheelFriction.extremumValue = frontRightCollider.sidewaysFriction.extremumValue;
-            FRwheelFriction.asymptoteSlip = frontRightCollider.sidewaysFriction.asymptoteSlip;
-            FRwheelFriction.asymptoteValue = frontRightCollider.sidewaysFriction.asymptoteValue;
-            FRwheelFriction.stiffness = frontRightCollider.sidewaysFriction.stiffness;
-            RLwheelFriction = new WheelFrictionCurve();
-            RLwheelFriction.extremumSlip = rearLeftCollider.sidewaysFriction.extremumSlip;
-            RLWextremumSlip = rearLeftCollider.sidewaysFriction.extremumSlip;
-            RLwheelFriction.extremumValue = rearLeftCollider.sidewaysFriction.extremumValue;
-            RLwheelFriction.asymptoteSlip = rearLeftCollider.sidewaysFriction.asymptoteSlip;
-            RLwheelFriction.asymptoteValue = rearLeftCollider.sidewaysFriction.asymptoteValue;
-            RLwheelFriction.stiffness = rearLeftCollider.sidewaysFriction.stiffness;
-            RRwheelFriction = new WheelFrictionCurve();
-            RRwheelFriction.extremumSlip = rearRightCollider.sidewaysFriction.extremumSlip;
-            RRWextremumSlip = rearRightCollider.sidewaysFriction.extremumSlip;
-            RRwheelFriction.extremumValue = rearRightCollider.sidewaysFriction.extremumValue;
-            RRwheelFriction.asymptoteSlip = rearRightCollider.sidewaysFriction.asymptoteSlip;
-            RRwheelFriction.asymptoteValue = rearRightCollider.sidewaysFriction.asymptoteValue;
-            RRwheelFriction.stiffness = rearRightCollider.sidewaysFriction.stiffness;
+        FLwheelFriction.extremumSlip = frontLeftCollider.sidewaysFriction.extremumSlip;
+        FLWextremumSlip = frontLeftCollider.sidewaysFriction.extremumSlip;
+        FLwheelFriction.extremumValue = frontLeftCollider.sidewaysFriction.extremumValue;
+        FLwheelFriction.asymptoteSlip = frontLeftCollider.sidewaysFriction.asymptoteSlip;
+        FLwheelFriction.asymptoteValue = frontLeftCollider.sidewaysFriction.asymptoteValue;
+        FLwheelFriction.stiffness = frontLeftCollider.sidewaysFriction.stiffness;
+        FRwheelFriction = new WheelFrictionCurve();
+        FRwheelFriction.extremumSlip = frontRightCollider.sidewaysFriction.extremumSlip;
+        FRWextremumSlip = frontRightCollider.sidewaysFriction.extremumSlip;
+        FRwheelFriction.extremumValue = frontRightCollider.sidewaysFriction.extremumValue;
+        FRwheelFriction.asymptoteSlip = frontRightCollider.sidewaysFriction.asymptoteSlip;
+        FRwheelFriction.asymptoteValue = frontRightCollider.sidewaysFriction.asymptoteValue;
+        FRwheelFriction.stiffness = frontRightCollider.sidewaysFriction.stiffness;
+        RLwheelFriction = new WheelFrictionCurve();
+        RLwheelFriction.extremumSlip = rearLeftCollider.sidewaysFriction.extremumSlip;
+        RLWextremumSlip = rearLeftCollider.sidewaysFriction.extremumSlip;
+        RLwheelFriction.extremumValue = rearLeftCollider.sidewaysFriction.extremumValue;
+        RLwheelFriction.asymptoteSlip = rearLeftCollider.sidewaysFriction.asymptoteSlip;
+        RLwheelFriction.asymptoteValue = rearLeftCollider.sidewaysFriction.asymptoteValue;
+        RLwheelFriction.stiffness = rearLeftCollider.sidewaysFriction.stiffness;
+        RRwheelFriction = new WheelFrictionCurve();
+        RRwheelFriction.extremumSlip = rearRightCollider.sidewaysFriction.extremumSlip;
+        RRWextremumSlip = rearRightCollider.sidewaysFriction.extremumSlip;
+        RRwheelFriction.extremumValue = rearRightCollider.sidewaysFriction.extremumValue;
+        RRwheelFriction.asymptoteSlip = rearRightCollider.sidewaysFriction.asymptoteSlip;
+        RRwheelFriction.asymptoteValue = rearRightCollider.sidewaysFriction.asymptoteValue;
+        RRwheelFriction.stiffness = rearRightCollider.sidewaysFriction.stiffness;
 
 
-            // We save the initial pitch of the car engine sound.
+        // We save the initial pitch of the car engine sound.
+        if (carEngineSound != null)
+        {
+            initialCarEngineSoundPitch = carEngineSound.pitch;
+        }
+
+        // We invoke 2 methods inside this script. CarSpeedUI() changes the text of the UI object that stores
+        // the speed of the car and CarSounds() controls the engine and drifting sounds. Both methods are invoked
+        // in 0 seconds, and repeatedly called every 0.1 seconds.
+        if (useUI)
+        {
+            InvokeRepeating("CarSpeedUI", 0f, 0.1f);
+        }
+        else if (!useUI)
+        {
+            if (carSpeedText != null)
+            {
+                carSpeedText.text = "0";
+            }
+        }
+
+        if (useSounds)
+        {
+            InvokeRepeating("CarSounds", 0f, 0.1f);
+        }
+        else if (!useSounds)
+        {
             if (carEngineSound != null)
             {
-                initialCarEngineSoundPitch = carEngineSound.pitch;
+                carEngineSound.Stop();
+            }
+            if (tireScreechSound != null)
+            {
+                tireScreechSound.Stop();
+            }
+        }
+
+        if (!useEffects)
+        {
+            if (RLWParticleSystem != null)
+            {
+                RLWParticleSystem.Stop();
+            }
+            if (RRWParticleSystem != null)
+            {
+                RRWParticleSystem.Stop();
+            }
+            if (RLWTireSkid != null)
+            {
+                RLWTireSkid.emitting = false;
+            }
+            if (RRWTireSkid != null)
+            {
+                RRWTireSkid.emitting = false;
+            }
+        }
+
+        if (useTouchControls)
+        {
+            if (throttleButton != null && reverseButton != null &&
+            turnRightButton != null && turnLeftButton != null
+            && handbrakeButton != null)
+            {
+
+                throttlePTI = throttleButton.GetComponent<PrometeoTouchInput>();
+                reversePTI = reverseButton.GetComponent<PrometeoTouchInput>();
+                turnLeftPTI = turnLeftButton.GetComponent<PrometeoTouchInput>();
+                turnRightPTI = turnRightButton.GetComponent<PrometeoTouchInput>();
+                handbrakePTI = handbrakeButton.GetComponent<PrometeoTouchInput>();
+                touchControlsSetup = true;
+
+            }
+            else
+            {
+                String ex = "Touch controls are not completely set up. You must drag and drop your scene buttons in the" +
+                " PrometeoCarController component.";
+                Debug.LogWarning(ex);
             }
 
-            // We invoke 2 methods inside this script. CarSpeedUI() changes the text of the UI object that stores
-            // the speed of the car and CarSounds() controls the engine and drifting sounds. Both methods are invoked
-            // in 0 seconds, and repeatedly called every 0.1 seconds.
-            if (useUI)
-            {
-                InvokeRepeating("CarSpeedUI", 0f, 0.1f);
-            }
-            else if (!useUI)
-            {
-                if (carSpeedText != null)
-                {
-                    carSpeedText.text = "0";
-                }
-            }
-
-            if (useSounds)
-            {
-                InvokeRepeating("CarSounds", 0f, 0.1f);
-            }
-            else if (!useSounds)
-            {
-                if (carEngineSound != null)
-                {
-                    carEngineSound.Stop();
-                }
-                if (tireScreechSound != null)
-                {
-                    tireScreechSound.Stop();
-                }
-            }
-
-            if (!useEffects)
-            {
-                if (RLWParticleSystem != null)
-                {
-                    RLWParticleSystem.Stop();
-                }
-                if (RRWParticleSystem != null)
-                {
-                    RRWParticleSystem.Stop();
-                }
-                if (RLWTireSkid != null)
-                {
-                    RLWTireSkid.emitting = false;
-                }
-                if (RRWTireSkid != null)
-                {
-                    RRWTireSkid.emitting = false;
-                }
-            }
-
-            if (useTouchControls)
-            {
-                if (throttleButton != null && reverseButton != null &&
-                turnRightButton != null && turnLeftButton != null
-                && handbrakeButton != null)
-                {
-
-                    throttlePTI = throttleButton.GetComponent<PrometeoTouchInput>();
-                    reversePTI = reverseButton.GetComponent<PrometeoTouchInput>();
-                    turnLeftPTI = turnLeftButton.GetComponent<PrometeoTouchInput>();
-                    turnRightPTI = turnRightButton.GetComponent<PrometeoTouchInput>();
-                    handbrakePTI = handbrakeButton.GetComponent<PrometeoTouchInput>();
-                    touchControlsSetup = true;
-
-                }
-                else
-                {
-                    String ex = "Touch controls are not completely set up. You must drag and drop your scene buttons in the" +
-                    " PrometeoCarController component.";
-                    Debug.LogWarning(ex);
-                }
-            
         }
     }
 
@@ -395,89 +406,112 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     void Update()
     {
 
-      
-            // Display.slider.value = currentHealth;
-            if (((this.transform.localEulerAngles.z > 170f) && (this.transform.localEulerAngles.z < 190f)) || (this.transform.localEulerAngles.z > 80f) && (this.transform.localEulerAngles.z < 100f))
-                StartCoroutine(Reset());
 
-            //CAR DATA
+        // Display.slider.value = currentHealth;
+        if (((this.transform.localEulerAngles.z > 170f) && (this.transform.localEulerAngles.z < 190f)) || (this.transform.localEulerAngles.z > 80f) && (this.transform.localEulerAngles.z < 100f))
+            StartCoroutine(Reset());
 
-            // We determine the speed of the car.
-            carSpeed = (2 * Mathf.PI * frontLeftCollider.radius * frontLeftCollider.rpm * 60) / 1000;
-            // Save the local velocity of the car in the x axis. Used to know if the car is drifting.
-            localVelocityX = transform.InverseTransformDirection(carRigidbody.velocity).x;
-            // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
-            localVelocityZ = transform.InverseTransformDirection(carRigidbody.velocity).z;
+        //CAR DATA
 
-            //CAR PHYSICS
+        // We determine the speed of the car.
+        carSpeed = (2 * Mathf.PI * frontLeftCollider.radius * frontLeftCollider.rpm * 60) / 1000;
+        // Save the local velocity of the car in the x axis. Used to know if the car is drifting.
+        localVelocityX = transform.InverseTransformDirection(carRigidbody.velocity).x;
+        // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
+        localVelocityZ = transform.InverseTransformDirection(carRigidbody.velocity).z;
 
-            /*
-            The next part is regarding to the car controller. First, it checks if the user wants to use touch controls (for
-            mobile devices) or analog input controls (WASD + Space).
+        //CAR PHYSICS
 
-            The following methods are called whenever a certain key is pressed. For example, in the first 'if' we call the
-            method GoForward() if the user has pressed W.
+        /*
+        The next part is regarding to the car controller. First, it checks if the user wants to use touch controls (for
+        mobile devices) or analog input controls (WASD + Space).
 
-            In this part of the code we specify what the car needs to do if the user presses W (throttle), S (reverse),
-            A (turn left), D (turn right) or Space bar (handbrake).
-            */
-            if (useTouchControls && touchControlsSetup)
+        The following methods are called whenever a certain key is pressed. For example, in the first 'if' we call the
+        method GoForward() if the user has pressed W.
+
+        In this part of the code we specify what the car needs to do if the user presses W (throttle), S (reverse),
+        A (turn left), D (turn right) or Space bar (handbrake).
+        */
+
+
+        if (useTouchControls && touchControlsSetup)
+        {
+
+            if (VariableJoystick.Vertical > 0)
             {
-
-                if (throttlePTI.buttonPressed)
-                {
-                    CancelInvoke("DecelerateCar");
-                    deceleratingCar = false;
-                    GoForward();
-                }
-                if (reversePTI.buttonPressed)
-                {
-                    CancelInvoke("DecelerateCar");
-                    deceleratingCar = false;
-                    GoReverse();
-                }
-
-                if (turnLeftPTI.buttonPressed)
-                {
-                    TurnLeft();
-                }
-                if (turnRightPTI.buttonPressed)
-                {
-                    TurnRight();
-                }
-                if (handbrakePTI.buttonPressed)
-                {
-                    CancelInvoke("DecelerateCar");
-                    deceleratingCar = false;
-                    Handbrake();
-                }
-                if (!handbrakePTI.buttonPressed)
-                {
-                    RecoverTraction();
-                }
-                if ((!throttlePTI.buttonPressed && !reversePTI.buttonPressed))
-                {
-                    ThrottleOff();
-                }
-                if ((!reversePTI.buttonPressed && !throttlePTI.buttonPressed) && !handbrakePTI.buttonPressed && !deceleratingCar)
-                {
-                    InvokeRepeating("DecelerateCar", 0f, 0.1f);
-                    deceleratingCar = true;
-                }
-                if (!turnLeftPTI.buttonPressed && !turnRightPTI.buttonPressed && steeringAxis != 0f)
-                {
-                    ResetSteeringAngle();
-                }
-
+                throttlePTI.buttonPressed = true;
+                CancelInvoke("DecelerateCar");
+                deceleratingCar = false;
+                GoForward();
             }
-            else if (!AIController)
+            if (VariableJoystick.Vertical < 0)
             {
+                reversePTI.buttonPressed = true;
+                CancelInvoke("DecelerateCar");
+                deceleratingCar = false;
+                GoReverse();
+            }
+            if (VariableJoystick.Horizontal < -0.3)
+            {
+                turnLeftPTI.buttonPressed = true;
+                TurnLeft();
+            }
 
+            if (VariableJoystick.Horizontal > 0.3)
+            {
+                turnRightPTI.buttonPressed = true;
+                TurnRight();
+            }
+            if (handbrakePTI.buttonPressed)
+            {
+                CancelInvoke("DecelerateCar");
+                deceleratingCar = false;
+                Handbrake();
+            }
+            if (!handbrakePTI.buttonPressed)
+            {
+                RecoverTraction();
+            }
+            if (VariableJoystick.Vertical == 0)
+            {
+                throttlePTI.buttonPressed = false;
+                reversePTI.buttonPressed = false;
+                ThrottleOff();
+            }
+           /* if(VariableJoystick.Horizontal==0&& VariableJoystick.Vertical==0&& !deceleratingCar)
+            {
+                    reversePTI.buttonPressed = false;
+                    throttlePTI.buttonPressed = false;
+                    handbrakePTI.buttonPressed = false;
+                    deceleratingCar = false;
+                    InvokeRepeating("DecelerateCar", 0f, 0.1f);
+                deceleratingCar = true;
+            }
+            if ((VariableJoystick.Horizontal >0) && steeringAxis != 0f)
+            {
+                turnRightPTI.buttonPressed = false;
+                turnLeftPTI.buttonPressed = false;
+                ResetSteeringAngle();
+            }*/
+            if ((reversePTI.buttonPressed && !throttlePTI.buttonPressed) && !handbrakePTI.buttonPressed && !deceleratingCar)
+            {
+                InvokeRepeating("DecelerateCar", 0f, 0.1f);
+                deceleratingCar = true;
+            }
+            if ((!turnRightPTI.buttonPressed && !turnLeftPTI.buttonPressed) && steeringAxis != 0f)
+            {
+                ResetSteeringAngle();
+            }
 
+        }
+        else if (!AIController)
+        {
             if (View.IsMine)
             {
+
                 if (Input.GetKey(KeyCode.W))
                 {
+                    Debug.Log("hello");
                     CancelInvoke("DecelerateCar");
                     deceleratingCar = false;
                     GoForward();
@@ -521,16 +555,16 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
                     ResetSteeringAngle();
                 }
             }
-            }
-            else
-            {
-                //ai inputs
-                Inputs();
-            }
+        }
+        else
+        {
+            //ai inputs
+            Inputs();
+        }
 
-            // We call the method AnimateWheelMeshes() in order to match the wheel collider movements with the 3D meshes of the wheels.
-            AnimateWheelMeshes();
-        
+        // We call the method AnimateWheelMeshes() in order to match the wheel collider movements with the 3D meshes of the wheels.
+        AnimateWheelMeshes();
+
     }
 
     void Inputs()
@@ -541,7 +575,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
          TurnLeft();
          TurnRight();*/
         GoForward();
-      
+
     }
 
     // This method converts the car speed data from float to string, and then set the text of the UI carSpeedText with this value.
