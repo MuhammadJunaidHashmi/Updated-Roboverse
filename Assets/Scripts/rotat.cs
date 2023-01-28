@@ -14,7 +14,6 @@ public class rotat : MonoBehaviour
     private Canvas canvas;
     private float maxHealth = 100;
     private float currentHealth = 0;
-    display Display;
     PhotonView view;
 
      void Start()
