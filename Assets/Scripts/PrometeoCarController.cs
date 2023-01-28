@@ -276,7 +276,9 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
         //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
         //gameObject. Also, we define the center of mass of the car with the Vector3 given
         //in the inspector.
+
         carRigidbody = gameObject.GetComponent<Rigidbody>();
+     
         carRigidbody.centerOfMass = bodyMassCenter;
 
         //Initial setup to calculate the drift value of the car. This part could look a bit
@@ -405,8 +407,6 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-
-
         // Display.slider.value = currentHealth;
         if (((this.transform.localEulerAngles.z > 170f) && (this.transform.localEulerAngles.z < 190f)) || (this.transform.localEulerAngles.z > 80f) && (this.transform.localEulerAngles.z < 100f))
             StartCoroutine(Reset());
@@ -416,6 +416,12 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
         // We determine the speed of the car.
         carSpeed = (2 * Mathf.PI * frontLeftCollider.radius * frontLeftCollider.rpm * 60) / 1000;
         // Save the local velocity of the car in the x axis. Used to know if the car is drifting.
+        //Debug.Log("val " +transform.InverseTransformDirection(carRigidbody.velocity).x);
+        if (carRigidbody == null)
+        {
+            Debug.Log("jun-");
+            carRigidbody = gameObject.GetComponent<Rigidbody>();
+        }
         localVelocityX = transform.InverseTransformDirection(carRigidbody.velocity).x;
         // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
         localVelocityZ = transform.InverseTransformDirection(carRigidbody.velocity).z;
@@ -478,30 +484,30 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
                 reversePTI.buttonPressed = false;
                 ThrottleOff();
             }
-           /* if(VariableJoystick.Horizontal==0&& VariableJoystick.Vertical==0&& !deceleratingCar)
+           /* if (VariableJoystick.Horizontal == 0 && VariableJoystick.Vertical == 0 && !deceleratingCar)
             {
-                    reversePTI.buttonPressed = false;
-                    throttlePTI.buttonPressed = false;
-                    handbrakePTI.buttonPressed = false;
-                    deceleratingCar = false;
-                    InvokeRepeating("DecelerateCar", 0f, 0.1f);
+                reversePTI.buttonPressed = false;
+                throttlePTI.buttonPressed = false;
+                handbrakePTI.buttonPressed = false;
+                deceleratingCar = false;
+                InvokeRepeating("DecelerateCar", 0f, 0.1f);
                 deceleratingCar = true;
-            }
-            if ((VariableJoystick.Horizontal >0) && steeringAxis != 0f)
+            }*/
+            if ((VariableJoystick.Horizontal >-0.3 && VariableJoystick.Horizontal < 0.3))
             {
                 turnRightPTI.buttonPressed = false;
                 turnLeftPTI.buttonPressed = false;
                 ResetSteeringAngle();
-            }*/
+            }
             if ((reversePTI.buttonPressed && !throttlePTI.buttonPressed) && !handbrakePTI.buttonPressed && !deceleratingCar)
             {
                 InvokeRepeating("DecelerateCar", 0f, 0.1f);
                 deceleratingCar = true;
             }
-            if ((!turnRightPTI.buttonPressed && !turnLeftPTI.buttonPressed) && steeringAxis != 0f)
+           /* if ((!turnRightPTI.buttonPressed && !turnLeftPTI.buttonPressed) && steeringAxis != 0f)
             {
                 ResetSteeringAngle();
-            }
+            }*/
 
         }
         else if (!AIController)
