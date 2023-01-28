@@ -9,10 +9,7 @@ using Photon.Pun;
 
 public class HealthBar : MonoBehaviourPun, IPunObservable
 {
-    public Text speed;
-    public Text mass;
-    public Text velocity;
-    public Text damage;
+   
     public Slider slider;
     public float maxHealth = 10;
     public float currentHealth = 0;
@@ -21,10 +18,9 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
     bool check = false;
     Rigidbody rd;
     PhotonView view;
-    public float ran = 0.0f;
 
 
-    PrometeoCarController controller;
+   
 
     private string recievedData = "ok!";
     private float test = 0;
@@ -34,8 +30,6 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
 
         currentHealth = maxHealth;
         rd = GetComponent<Rigidbody>();
-        controller = GetComponent<PrometeoCarController>();
-        InvokeRepeating("CarSpeedUI", 0f, 0.1f);
         view = GetComponent<PhotonView>();
 
 
@@ -100,9 +94,6 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
         }
     }
 
-    /// <summary>
-    /// Handle Orc is dead.
-    /// </summary>
     private void Die()
     {
         // GameManager.Instance.CheckDie();
@@ -118,34 +109,9 @@ public class HealthBar : MonoBehaviourPun, IPunObservable
         slider.value = health;
     }
 
-    public void CarSpeedUI()
-    {
 
-            try
-            {
-                float absoluteCarSpeed = Mathf.Abs(controller.carSpeed);
-            float absoluteCartorque = Mathf.Abs(controller.rearLeftCollider.motorTorque);
-
-            speed.text = Mathf.RoundToInt(absoluteCarSpeed).ToString();
-
-            mass.text = rd.mass.ToString();
-            
-            velocity.text = "( "+ Math.Round(rd.velocity.x, 2)  + "," + Math.Round(rd.velocity.y, 2) + "," + Math.Round(rd.velocity.z, 2) + " )";
-
-            }
-            catch (System.Exception ex)
-            {
-            
-                Debug.LogWarning("name " +this.name+ ex);
-            }
-    }
-    // Update is called once per frame
      void Update()
     {
-        
-  
-            
-
             if (currentHealth==0 && this.tag.Equals("Player"))
         {
             GameManager.Instance.GameLoose(1);
