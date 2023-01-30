@@ -7,7 +7,8 @@ public enum Scenes {
     MainMenu,
     LevelSelection,
     PlayerSelection,
-    GamePlay
+    GamePlay,
+    GuestMode
 }
 
 public enum RewardTypes {
