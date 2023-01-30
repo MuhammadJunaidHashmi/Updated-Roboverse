@@ -82,6 +82,7 @@ public class GF_SplashScreen : MonoBehaviour {
 		Selection_UI.signupScreen.SetActive(false);
 		Selection_UI.loginScreen.SetActive(true);
 	}
+
 	public void closeLogin()
     {
 		Selection_UI.loginScreen.SetActive(false);
