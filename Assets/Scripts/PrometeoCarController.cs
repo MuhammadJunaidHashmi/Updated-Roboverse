@@ -205,9 +205,10 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     }
     private void OnCollisionStay(Collision collision)
     {
-        particle.SetActive(true);
+        
         if (collision.collider.name.Equals("Axe"))
         {
+            particle.SetActive(true);
             healthShow.SetActive(true);
             //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
             if (currentHealth <= maxHealth)
@@ -217,6 +218,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
         }
         if (collision.collider.tag.Equals("rotator"))
         {
+            particle.SetActive(true);
             healthShow.SetActive(true);
             Debug.Log("stay");
             //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
@@ -233,6 +235,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
     {
         if (collision.collider.name.Equals("Axe"))
         {
+            particle.SetActive(true);
             healthShow.SetActive(true);
             // Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
             if (currentHealth <= maxHealth)
@@ -242,6 +245,7 @@ public class PrometeoCarController : MonoBehaviourPunCallbacks
         }
         if (collision.collider.tag.Equals("rotator"))
         {
+            particle.SetActive(true);
             healthShow.SetActive(true);
             Debug.Log("Enter");
             //Debug.Log(this.name + " maginitude: " + collision.relativeVelocity.magnitude + " speed: " + collision.gameObject.GetComponent<PrometeoCarController>().carSpeed);
