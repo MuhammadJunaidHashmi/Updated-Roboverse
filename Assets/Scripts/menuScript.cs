@@ -9,6 +9,7 @@ using System;
 
 public class menuScript : MonoBehaviourPunCallbacks
 {
+    public GameObject newGame;
     public GameObject muiltyplayerLoby;
     public GameObject loadingAnimation;
     public GameObject joinRoom;
@@ -101,6 +102,12 @@ public class menuScript : MonoBehaviourPunCallbacks
         muiltyplayerLoby.SetActive(true);
         loadingAnimation.SetActive(true);
         PhotonNetwork.ConnectUsingSettings();
+
+    }
+    public void clickNewGame()
+    {
+        muiltyplayerLoby.SetActive(true);
+        loadingAnimation.SetActive(true);
 
     }
     public void close()
