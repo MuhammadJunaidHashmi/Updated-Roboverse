@@ -6,14 +6,24 @@ public class playAudio : MonoBehaviour
 {
 
     public AudioSource src;
-
- //   public AudioClip clip;
+    public AudioSource background;
+    public AudioClip clip;
 
 
     void Start()
     {
-    //    src.clip = clip;
+        src.clip = clip;
+        StartCoroutine(waitSound());
+    }
+
+
+    IEnumerator waitSound()
+    {
+        yield return new WaitForSeconds(12f);
+        background.volume = 0.1f;
         src.Play();
+        yield return new WaitForSeconds(5f);
+        background.volume = 1f;
     }
 
 }

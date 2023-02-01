@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-
+using TMPro;
 public enum Scenes {
     SplashScreen,
     MainMenu,
@@ -29,7 +29,7 @@ public class Game_Dialogues {
     public GameObject HelpScreen;
     public GameObject LoadingScreen;
     public GameObject Timer;
-    public Text Timer_txt;
+    public TMP_Text Timer_txt;
     public Text InstructionText;
 }
 	
