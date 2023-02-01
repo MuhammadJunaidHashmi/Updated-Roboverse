@@ -47,6 +47,21 @@ public class RootsignupRes
 }
 
 [System.Serializable]
+public class EmailData
+{
+    public string message;
+    public string token;
+    public int status;
+}
+
+[System.Serializable]
+public class ResetData
+{
+    public string password;
+    public string token;
+}
+
+[System.Serializable]
 public class User_value
 {
     public int id;

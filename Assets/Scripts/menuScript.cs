@@ -21,6 +21,8 @@ public class menuScript : MonoBehaviourPunCallbacks
     public TMP_Text playerName;
     public TMP_InputField playerRename;
     public GameObject loader;
+    public AudioSource menuAudio;
+    
     public string url;
 
     public void Start()
@@ -141,12 +143,18 @@ public class menuScript : MonoBehaviourPunCallbacks
     {
         setting.SetActive(true);
     }
+ 
     public void Quit()
     {
         #if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;
         #endif
             Application.Quit();
+    }
+    public void buttonAudio()
+    {
+        menuAudio.Play();
+
     }
 
 }

@@ -15,6 +15,9 @@ public class Selection_Element
 	public GameObject titleScreen;
 	public GameObject signupScreen;
 	public GameObject loginScreen;
+	public GameObject passwordForgot;
+	public GameObject passwordReset;
+	public AudioSource menuAudio;
 
 
 }
@@ -96,4 +99,23 @@ public class GF_SplashScreen : MonoBehaviour {
 		Selection_UI.signupScreen.SetActive(true);
 
 	}
+	public void buttonAudio()
+	{
+		Selection_UI.menuAudio.Play();
+
+	}
+	public void clickForgot()
+	{
+		Selection_UI.passwordForgot.SetActive(true);
+	}
+	public void closeForgot()
+	{
+		Selection_UI.passwordForgot.SetActive(false);
+	}
+	
+	public void closeReset()
+	{
+		Selection_UI.passwordReset.SetActive(false);
+	}
+
 }
