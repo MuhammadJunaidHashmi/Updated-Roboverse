@@ -170,18 +170,20 @@ public class GF_PlayerSelection : MonoBehaviour {
     }
 
     public void Previous(){
+       
         current--;
         GetPlayerInfo();
     }
 
     public void Next(){
-
+       
         current++;
         GetPlayerInfo();
     }
 
     public void PlayLevel(){
-		GameManager.Instance.SessionStatus = 1;
+        PlayerPrefs.SetInt("playerIndex", current);
+        GameManager.Instance.SessionStatus = 1;
         GameManager.Instance.CurrentPlayer = current+1;
 		Selection_UI.LoadingScreen.SetActive(true);
         StartCoroutine(startGame());
