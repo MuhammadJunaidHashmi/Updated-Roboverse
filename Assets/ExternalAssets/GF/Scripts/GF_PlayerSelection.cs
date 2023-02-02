@@ -181,7 +181,8 @@ public class GF_PlayerSelection : MonoBehaviour {
     }
 
     public void PlayLevel(){
-		GameManager.Instance.SessionStatus = 1;
+        PlayerPrefs.SetInt("playerIndex", current);
+           GameManager.Instance.SessionStatus = 1;
         GameManager.Instance.CurrentPlayer = current+1;
 		Selection_UI.LoadingScreen.SetActive(true);
         StartCoroutine(startGame());
