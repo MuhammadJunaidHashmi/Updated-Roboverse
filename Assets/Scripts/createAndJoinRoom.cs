@@ -53,7 +53,7 @@ public class createAndJoinRoom : MonoBehaviourPunCallbacks
             if(joined)
             {
                 joined = false;
-                PhotonNetwork.LoadLevel("GamePlay");
+                PhotonNetwork.LoadLevel("PlayerSelection");
             }
          
         }
